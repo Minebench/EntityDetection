@@ -67,8 +67,8 @@ public class PluginCommandExecutor implements CommandExecutor {
                     if(!sender.hasPermission(sub.getPermission())) {
                         continue;
                     }
-                    helpText.add(sub.getUsage(label));
-                    helpText.add(ChatColor.GRAY + sub.getHelp());
+                    helpText.add(ChatColor.YELLOW + sub.getUsage(label));
+                    helpText.add(ChatColor.WHITE + sub.getHelp());
                 }
             } else {
                 helpText.add("No sub commands found.");
