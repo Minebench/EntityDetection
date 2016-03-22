@@ -1,0 +1,117 @@
+package de.themoep.entitydetection.searcher;
+
+import de.themoep.entitydetection.EntityDetection;
+import net.md_5.bungee.api.ChatColor;
+import org.bukkit.World;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
+/**
+ * Copyright 2016 Max Lee (https://github.com/Phoenix616/)
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the Mozilla Public License as published by
+ * the Mozilla Foundation, version 2.
+ * <p/>
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * Mozilla Public License v2.0 for more details.
+ * <p/>
+ * You should have received a copy of the Mozilla Public License v2.0
+ * along with this program. If not, see <http://mozilla.org/MPL/2.0/>.
+ */
+public class EntitySearch extends BukkitRunnable {
+    private final EntityDetection plugin;
+    private final CommandSender owner;
+    private SearchType type = SearchType.CUSTOM;
+    private Set<EntityType> searchedEntities = new HashSet<EntityType>();
+    private long startTime;
+    private boolean running = true;
+
+    public EntitySearch(EntityDetection plugin, CommandSender sender) {
+        this.plugin = plugin;
+        owner = sender;
+    }
+
+    public SearchType getType() {
+        return type;
+    }
+
+    public void setType(SearchType type) {
+        if(getSearchedEntities().size() == 0) {
+            this.type = type;
+        } else {
+            this.type = SearchType.CUSTOM;
+        }
+        Collections.addAll(searchedEntities, type.getEntities());
+    }
+
+    public void addSearchedType(EntityType type) {
+        searchedEntities.add(type);
+        this.type = SearchType.CUSTOM;
+    }
+
+    public Set<EntityType> getSearchedEntities() {
+        return searchedEntities;
+    }
+
+    public String getOwner() {
+        return owner.getName();
+    }
+
+    public long getStartTime() {
+        return startTime;
+    }
+
+    /**
+     * Get the duration since this search started
+     * @return The duration in seconds
+     */
+    public long getDuration() {
+        return (System.currentTimeMillis() - getStartTime()) / 1000;
+    }
+
+    public BukkitTask start() {
+        return runTask(plugin);
+    }
+
+    public boolean isRunning() {
+        return running;
+    }
+
+    public void stop(String name) {
+        running = false;
+        cancel();
+        if(!owner.getName().equals(name)) {
+            owner.sendMessage(ChatColor.YELLOW + name + ChatColor.RED + " stopped your " + getType() + " search after " + getDuration() + "s!");
+        }
+    }
+
+    public void run() {
+        startTime = System.currentTimeMillis();
+        SearchResult result = new SearchResult(this);
+        for(World world : plugin.getServer().getWorlds()) {
+            for(Entity e : world.getEntities()) {
+                if(!running) {
+                    return;
+                }
+                if(searchedEntities.contains(e.getType())) {
+                    result.addEntity(e);
+                }
+            }
+        }
+
+        result.sort();
+        plugin.addResult(result);;
+        plugin.send(owner, result);
+        running = false;
+    }
+}

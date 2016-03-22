@@ -1,0 +1,16 @@
+name: ${project.name}
+main: de.themoep.entitydetection.EntityDetection
+version: '${minecraft.plugin.version}'
+description: ${project.description}
+authors: [Phoenix616]
+commands:
+   entitydetection:
+      aliases: [detect]
+      description: Command description.
+      usage: /<command> [search|tp|list|stop]
+      permission: entitydetection.command
+      permission-message: You don't have the permission <permission>
+permissions:
+   entitydetection.command:
+      description: Gives permission to the plugin command
+      default: op
