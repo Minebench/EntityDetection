@@ -118,9 +118,11 @@ public class EntityDetection extends JavaPlugin {
                 }
             }
 
-            ComponentBuilder builder = new ComponentBuilder(Utils.enumToHumanName(result.getType()) + " search from " + dateStr)
+            ComponentBuilder builder = new ComponentBuilder(Utils.enumToHumanName(result.getType()) + " search")
                     .color(net.md_5.bungee.api.ChatColor.GREEN)
-                    .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(searchedTypes)));
+                    .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(searchedTypes)))
+                    .append("from " + dateStr + ":")
+                    .color(net.md_5.bungee.api.ChatColor.WHITE);
 
             List<SearchResultEntry> results = result.getSortedEntries();
             if(results.size() > 0) {
@@ -160,14 +162,14 @@ public class EntityDetection extends JavaPlugin {
                     }
                 }
             } else {
-                builder.append("No entities of that type found!")
+                builder.append("\nNo entities of that type found!")
                         .color(net.md_5.bungee.api.ChatColor.RED);
             }
 
             ((Player) sender).spigot().sendMessage(builder.create());
         } else {
             List<String> msg = new ArrayList<String>();
-            msg.add(ChatColor.GREEN + Utils.enumToHumanName(result.getType()) + " search from " + dateStr);
+            msg.add(ChatColor.GREEN + Utils.enumToHumanName(result.getType()) + " search " + ChatColor.WHITE + "from " + dateStr + ":");
 
             List<SearchResultEntry> chunkEntries = result.getSortedEntries();
             if(chunkEntries.size() > 0) {
