@@ -7,10 +7,12 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Copyright 2016 Max Lee (https://github.com/Phoenix616/)
@@ -77,7 +79,9 @@ public class PluginCommandExecutor implements CommandExecutor {
 
         SubCommand sub = getSubCommand(cmd, args);
         if(sub == null) {
-            return false;
+            Set<String> subCmdsStr = subCommands.keySet();
+            sender.sendMessage("Usage: /" + label + " " + Arrays.toString(subCmdsStr.toArray(new String[subCmdsStr.size()])));
+            return true;
         }
 
         String argStr = args[0];
