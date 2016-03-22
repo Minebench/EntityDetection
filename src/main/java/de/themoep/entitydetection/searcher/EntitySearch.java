@@ -9,8 +9,10 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -35,6 +37,7 @@ public class EntitySearch extends BukkitRunnable {
     private Set<EntityType> searchedEntities = new HashSet<EntityType>();
     private long startTime;
     private boolean running = true;
+    private List<Entity> entities = new ArrayList<Entity>();
 
     public EntitySearch(EntityDetection plugin, CommandSender sender) {
         this.plugin = plugin;
@@ -80,6 +83,9 @@ public class EntitySearch extends BukkitRunnable {
     }
 
     public BukkitTask start() {
+        for(World world : plugin.getServer().getWorlds()) {
+            entities.addAll(world.getEntities());
+        }
         return runTaskAsynchronously(plugin);
     }
 
@@ -98,14 +104,13 @@ public class EntitySearch extends BukkitRunnable {
     public void run() {
         startTime = System.currentTimeMillis();
         SearchResult result = new SearchResult(this);
-        for(World world : plugin.getServer().getWorlds()) {
-            for(Entity e : world.getEntities()) {
-                if(!running) {
-                    return;
-                }
-                if(searchedEntities.contains(e.getType())) {
-                    result.addEntity(e);
-                }
+
+        for(Entity e : entities) {
+            if(!running) {
+                return;
+            }
+            if(searchedEntities.contains(e.getType())) {
+                result.addEntity(e);
             }
         }
 
