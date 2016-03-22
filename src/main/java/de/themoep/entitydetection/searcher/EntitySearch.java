@@ -80,7 +80,7 @@ public class EntitySearch extends BukkitRunnable {
     }
 
     public BukkitTask start() {
-        return runTask(plugin);
+        return runTaskAsynchronously(plugin);
     }
 
     public boolean isRunning() {
