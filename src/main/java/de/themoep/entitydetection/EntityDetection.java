@@ -123,40 +123,45 @@ public class EntityDetection extends JavaPlugin {
                     .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(searchedTypes)));
 
             List<SearchResultEntry> results = result.getSortedEntries();
-            for(int line = start; line < start + 10 && line < results.size(); line++) {
-               SearchResultEntry entry = results.get(line);
+            if(results.size() > 0) {
+                for(int line = start; line < start + 10 && line < results.size(); line++) {
+                    SearchResultEntry entry = results.get(line);
 
-                builder.append("\n")
-                        .retain(ComponentBuilder.FormatRetention.NONE)
-                        .append(" " + (line + 1) + ": ")
-                        .color(net.md_5.bungee.api.ChatColor.WHITE)
-                        .event(
-                                new HoverEvent(
-                                        HoverEvent.Action.SHOW_TEXT,
-                                        new ComponentBuilder("Click to teleport to " + (line + 1))
-                                                .color(net.md_5.bungee.api.ChatColor.BLUE)
-                                                .create()
-                                )
-                        )
-                        .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/detect tp " + (line + 1)))
-                        .append(entry.getChunk() + " ")
-                        .color(net.md_5.bungee.api.ChatColor.YELLOW)
-                        .append(entry.getSize() + " ")
-                        .color(net.md_5.bungee.api.ChatColor.RED);
-
-                int entitiesListed = 0;
-                for(Entry<EntityType, Integer> entityEntry : entry.getEntityCount()) {
-                    builder.append(Utils.enumToHumanName(entityEntry.getKey()) + "[")
-                            .color(net.md_5.bungee.api.ChatColor.GREEN)
-                            .append(entityEntry.getValue().toString())
+                    builder.append("\n")
+                            .retain(ComponentBuilder.FormatRetention.NONE)
+                            .append(" " + (line + 1) + ": ")
                             .color(net.md_5.bungee.api.ChatColor.WHITE)
-                            .append("] ")
-                            .color(net.md_5.bungee.api.ChatColor.GREEN);
+                            .event(
+                                    new HoverEvent(
+                                            HoverEvent.Action.SHOW_TEXT,
+                                            new ComponentBuilder("Click to teleport to " + (line + 1))
+                                                    .color(net.md_5.bungee.api.ChatColor.BLUE)
+                                                    .create()
+                                    )
+                            )
+                            .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/detect tp " + (line + 1)))
+                            .append(entry.getChunk() + " ")
+                            .color(net.md_5.bungee.api.ChatColor.YELLOW)
+                            .append(entry.getSize() + " ")
+                            .color(net.md_5.bungee.api.ChatColor.RED);
 
-                    entitiesListed++;
-                    if(entitiesListed >= 3)
-                        break;
+                    int entitiesListed = 0;
+                    for(Entry<EntityType, Integer> entityEntry : entry.getEntityCount()) {
+                        builder.append(Utils.enumToHumanName(entityEntry.getKey()) + "[")
+                                .color(net.md_5.bungee.api.ChatColor.GREEN)
+                                .append(entityEntry.getValue().toString())
+                                .color(net.md_5.bungee.api.ChatColor.WHITE)
+                                .append("] ")
+                                .color(net.md_5.bungee.api.ChatColor.GREEN);
+
+                        entitiesListed++;
+                        if(entitiesListed >= 3)
+                            break;
+                    }
                 }
+            } else {
+                builder.append("No entities of that type found!")
+                        .color(net.md_5.bungee.api.ChatColor.RED);
             }
 
             ((Player) sender).spigot().sendMessage(builder.create());
@@ -165,21 +170,24 @@ public class EntityDetection extends JavaPlugin {
             msg.add(ChatColor.GREEN + Utils.enumToHumanName(result.getType()) + " search from " + dateStr);
 
             List<SearchResultEntry> chunkEntries = result.getSortedEntries();
+            if(chunkEntries.size() > 0) {
+                for(int line = start; line < start + 10 && line < chunkEntries.size(); line++) {
+                    SearchResultEntry chunkEntry = chunkEntries.get(line);
 
-            for(int line = start; line < start + 10 && line < chunkEntries.size(); line++) {
-                SearchResultEntry chunkEntry = chunkEntries.get(line);
+                    String lineText = ChatColor.WHITE + " " + (line + 1) + ": " + ChatColor.YELLOW + chunkEntry.getChunk() + " " + ChatColor.RED + chunkEntry.getSize() + " ";
 
-                String lineText = ChatColor.WHITE + " " + (line + 1) + ": " + ChatColor.YELLOW + chunkEntry.getChunk() + " " + ChatColor.RED + chunkEntry.getSize() + " ";
+                    int entitiesListed = 0;
+                    for(Entry<EntityType, Integer> entityEntry : chunkEntry.getEntityCount()) {
+                        lineText += ChatColor.GREEN + Utils.enumToHumanName(entityEntry.getKey()) + "[" + ChatColor.WHITE + entityEntry.getValue().toString() + ChatColor.GREEN + "] ";
+                        entitiesListed++;
+                        if(entitiesListed >= 3)
+                            break;
+                    }
 
-                int entitiesListed = 0;
-                for(Entry<EntityType, Integer> entityEntry : chunkEntry.getEntityCount()) {
-                    lineText += ChatColor.GREEN + Utils.enumToHumanName(entityEntry.getKey()) + "[" + ChatColor.WHITE + entityEntry.getValue().toString() + ChatColor.GREEN + "] ";
-                    entitiesListed++;
-                    if(entitiesListed >= 3)
-                        break;
+                    msg.add(lineText);
                 }
-
-                msg.add(lineText);
+            } else {
+                msg.add(ChatColor.RED + "No entities of that type found!");
             }
             sender.sendMessage(msg.toArray(new String[msg.size()]));
         }
