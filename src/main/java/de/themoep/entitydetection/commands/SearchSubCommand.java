@@ -25,8 +25,8 @@ import org.bukkit.entity.EntityType;
 public class SearchSubCommand extends SubCommand {
     public SearchSubCommand(EntityDetection plugin) {
         super(plugin, plugin.getName().toLowerCase(), "search",
-                "[monster|passive|misc|block|all|<entitytype>]",
-                "Search for groups of entities. Default without an argument is monster."
+                "[monster|passive|misc|block|all| <entitytype>]",
+                "Search for groups of entities. Default is monster."
         );
     }
 
