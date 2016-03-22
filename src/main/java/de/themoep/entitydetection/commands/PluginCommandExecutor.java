@@ -92,8 +92,8 @@ public class PluginCommandExecutor implements CommandExecutor {
 
     private SubCommand getSubCommand(Command cmd, String[] args) {
         if(subCommands.containsKey(cmd.getName())) {
-            String path = "";
-            int i = 0;
+            String path = args.length > 0 ? args[0] : "";
+            int i = 1;
             while(!subCommands.get(cmd.getName()).containsKey(path) && i < args.length) {
                 path += " " + args[i].toLowerCase();
                 i++;
