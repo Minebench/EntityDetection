@@ -86,7 +86,7 @@ public class PluginCommandExecutor implements CommandExecutor {
 
         String argStr = args[0];
         for(int i = 1; i < args.length; i++) {
-            argStr += args[i];
+            argStr += " " + args[i];
         }
         String[] subArgs = argStr.replace(sub.getPath(), "").trim().split(" ");
         if(!sub.execute(sender, subArgs)) {
