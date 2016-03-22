@@ -45,6 +45,9 @@ public class PluginCommandExecutor implements CommandExecutor {
         if(!subCommands.containsKey(sub.getCommand())) {
             subCommands.put(sub.getCommand(), new LinkedHashMap<String, SubCommand>());
         }
+        if(subCommands.get(sub.getCommand()).containsKey(sub.getPath())) {
+            throw new IllegalArgumentException("A sub command with the path '" + sub.getPath() + "' is already defined for command '" + sub.getCommand() + "'!");
+        }
         subCommands.get(sub.getCommand()).put(sub.getPath(), sub);
         try {
             plugin.getServer().getPluginManager().addPermission(sub.getPermission());
