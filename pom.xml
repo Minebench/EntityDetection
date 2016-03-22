@@ -6,8 +6,8 @@
 
     <groupId>de.themoep</groupId>
     <artifactId>entitydetection</artifactId>
-    <version>1.0-SNAPSHOT</version>
-    <description>Bukkit plugin to find groups of mobs, animals or other entities. Ideal to detect XP farms!</description>
+    <version>1.0</version>
+    <description>Bukkit plugin to find groups of mobs, animals or other entities.</description>
     <name>EntityDetection</name>
 
     <properties>
