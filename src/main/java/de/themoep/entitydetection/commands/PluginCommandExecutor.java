@@ -30,9 +30,15 @@ public class PluginCommandExecutor implements CommandExecutor {
     private final EntityDetection plugin;
 
     private Map<String, Map<String, SubCommand>> subCommands = new HashMap<String, Map<String, SubCommand>>();
+    private String header;
 
     public PluginCommandExecutor(EntityDetection plugin) {
         this.plugin = plugin;
+        header = ChatColor.DARK_GRAY + " " + ChatColor.STRIKETHROUGH + "---" + ChatColor.RESET +
+                ChatColor.GRAY + " " + plugin.getDescription().getAuthors().get(0) + "'s " +
+                ChatColor.RED + plugin.getName() +
+                ChatColor.GRAY + " v" + plugin.getDescription().getVersion() +
+                " " + ChatColor.DARK_GRAY  + ChatColor.STRIKETHROUGH + "---" + ChatColor.RESET;
         plugin.getCommand(plugin.getName().toLowerCase()).setExecutor(this);
     }
 
@@ -51,13 +57,7 @@ public class PluginCommandExecutor implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if(args.length == 0) {
             List<String> helpText = new ArrayList<String>();
-            helpText.add(
-                    ChatColor.DARK_GRAY + " " + ChatColor.STRIKETHROUGH + "---" + ChatColor.RESET +
-                    ChatColor.GRAY + " " + plugin.getDescription().getAuthors().get(0) + "'s " +
-                    ChatColor.RED + plugin.getName() +
-                    ChatColor.GRAY + " v" + plugin.getDescription().getVersion() +
-                    " " + ChatColor.DARK_GRAY + ChatColor.STRIKETHROUGH + "---" + ChatColor.RESET
-            );
+            helpText.add(header);
             if(subCommands.containsKey(cmd.getName())) {
                 for(SubCommand sub : subCommands.get(cmd.getName()).values()) {
                     if(!sender.hasPermission(sub.getPermission())) {
