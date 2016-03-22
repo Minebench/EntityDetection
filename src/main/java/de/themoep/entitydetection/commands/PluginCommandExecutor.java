@@ -77,34 +77,31 @@ public class PluginCommandExecutor implements CommandExecutor {
             return true;
         }
 
-        SubCommand sub = getSubCommand(cmd, args);
+        SubCommand sub = null;
+
+        int pathPartCount = 1;
+        if(subCommands.containsKey(cmd.getName())) {
+            String path = args[0];
+            while(!subCommands.get(cmd.getName()).containsKey(path) && pathPartCount < args.length) {
+                pathPartCount++;
+                path += " " + args[pathPartCount].toLowerCase();
+            }
+            sub = subCommands.get(cmd.getName()).get(path);
+        }
+
         if(sub == null) {
             Set<String> subCmdsStr = subCommands.keySet();
             sender.sendMessage("Usage: /" + label + " " + Arrays.toString(subCmdsStr.toArray(new String[subCmdsStr.size()])));
             return true;
         }
 
-        String argStr = args[0];
-        for(int i = 1; i < args.length; i++) {
-            argStr += " " + args[i];
+        String[] subArgs = new String[]{};
+        if(args.length > pathPartCount) {
+            subArgs = Arrays.copyOfRange(args, pathPartCount, args.length - pathPartCount);
         }
-        String[] subArgs = argStr.replace(sub.getPath(), "").trim().split(" ");
         if(!sub.execute(sender, subArgs)) {
             sender.sendMessage("Usage: " + sub.getUsage(label));
         }
         return true;
-    }
-
-    private SubCommand getSubCommand(Command cmd, String[] args) {
-        if(subCommands.containsKey(cmd.getName())) {
-            String path = args.length > 0 ? args[0] : "";
-            int i = 1;
-            while(!subCommands.get(cmd.getName()).containsKey(path) && i < args.length) {
-                path += " " + args[i].toLowerCase();
-                i++;
-            }
-            return subCommands.get(cmd.getName()).get(path);
-        }
-        return null;
     }
 }
