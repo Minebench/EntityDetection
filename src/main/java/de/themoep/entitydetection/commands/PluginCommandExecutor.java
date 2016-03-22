@@ -101,7 +101,7 @@ public class PluginCommandExecutor implements CommandExecutor {
 
         String[] subArgs = new String[]{};
         if(args.length > pathPartCount) {
-            subArgs = Arrays.copyOfRange(args, pathPartCount, args.length - pathPartCount);
+            subArgs = Arrays.copyOfRange(args, pathPartCount, args.length);
         }
         if(!sub.execute(sender, subArgs)) {
             sender.sendMessage("Usage: " + sub.getUsage(label));
