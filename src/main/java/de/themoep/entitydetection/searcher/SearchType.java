@@ -92,12 +92,13 @@ public enum SearchType {
                     continue;
                 }
                 Class<? extends Entity> e = et.getEntityClass();
-                if(e != null) {
-                    for(Class eClass : classes) {
-                        if(eClass.isAssignableFrom(e)) {
-                            typeSet.add(et);
-                            break;
-                        }
+                if(e == null) {
+                    continue;
+                }
+                for(Class eClass : classes) {
+                    if(eClass.isAssignableFrom(e)) {
+                        typeSet.add(et);
+                        break;
                     }
                 }
             }
