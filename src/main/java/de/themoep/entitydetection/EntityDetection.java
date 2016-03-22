@@ -118,7 +118,7 @@ public class EntityDetection extends JavaPlugin {
                 }
             }
 
-            ComponentBuilder builder = new ComponentBuilder(Utils.enumToHumanName(result.getType()) + " search")
+            ComponentBuilder builder = new ComponentBuilder(Utils.enumToHumanName(result.getType()) + " search ")
                     .color(net.md_5.bungee.api.ChatColor.GREEN)
                     .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(searchedTypes)))
                     .append("from " + dateStr + ":")
@@ -162,7 +162,7 @@ public class EntityDetection extends JavaPlugin {
                     }
                 }
             } else {
-                builder.append("\nNo entities of that type found!")
+                builder.append("\n No entities of that type found!")
                         .color(net.md_5.bungee.api.ChatColor.RED);
             }
 
@@ -189,7 +189,7 @@ public class EntityDetection extends JavaPlugin {
                     msg.add(lineText);
                 }
             } else {
-                msg.add(ChatColor.RED + "No entities of that type found!");
+                msg.add(ChatColor.RED + " No entities of that type found!");
             }
             sender.sendMessage(msg.toArray(new String[msg.size()]));
         }
