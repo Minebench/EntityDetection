@@ -110,7 +110,7 @@ public class EntityDetection extends JavaPlugin {
         if(serverIsSpigot && sender instanceof Player) {
             String searchedTypes = "";
             for(EntityType type : result.getSearchedEntities()) {
-                searchedTypes += type.toString() + "\n";
+                searchedTypes += ChatColor.DARK_PURPLE + Utils.enumToHumanName(type) + "\n";
             }
 
             ComponentBuilder builder = new ComponentBuilder(Utils.enumToHumanName(result.getType()) + " search from " + dateStr)
@@ -125,7 +125,14 @@ public class EntityDetection extends JavaPlugin {
                         .retain(ComponentBuilder.FormatRetention.NONE)
                         .append(" " + (line + 1) + ": ")
                         .color(net.md_5.bungee.api.ChatColor.WHITE)
-                        .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText("Click to teleport to " + (line + 1))))
+                        .event(
+                                new HoverEvent(
+                                        HoverEvent.Action.SHOW_TEXT,
+                                        new ComponentBuilder("Click to teleport to " + (line + 1))
+                                                .color(net.md_5.bungee.api.ChatColor.BLUE)
+                                                .create()
+                                )
+                        )
                         .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/detect tp " + (line + 1)))
                         .append(entry.getChunk() + " ")
                         .color(net.md_5.bungee.api.ChatColor.YELLOW)
