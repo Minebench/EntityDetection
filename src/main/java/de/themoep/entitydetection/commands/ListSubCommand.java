@@ -80,7 +80,7 @@ public class ListSubCommand extends SubCommand {
             return true;
         }
 
-        getPlugin().send(sender, result, page);
+        getPlugin().send(sender, result, page - 1);
         return true;
     }
 }
