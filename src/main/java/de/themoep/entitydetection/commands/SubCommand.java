@@ -3,6 +3,7 @@ package de.themoep.entitydetection.commands;
 import de.themoep.entitydetection.EntityDetection;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
 
 /**
  * Copyright 2016 Max Lee (https://github.com/Phoenix616/)
@@ -31,7 +32,11 @@ public abstract class SubCommand {
         this.plugin = plugin;
         this.command = command;
         this.path = path;
-        this.permission = new Permission(plugin.getName().toLowerCase() + ".command." + getPath().replace(' ', '.').toLowerCase(), "Get access to the /" + getCommand() + " " + getPath() + " subcommand.");
+        this.permission = new Permission(
+                plugin.getName().toLowerCase() + ".command." + getPath().replace(' ', '.').toLowerCase(),
+                "Get access to the /" + getCommand() + " " + getPath() + " subcommand.",
+                PermissionDefault.OP
+        );
         this.arguments = arguments;
         this.help = help;
     }

@@ -99,6 +99,11 @@ public class PluginCommandExecutor implements CommandExecutor {
             }
         }
 
+        if(!sender.hasPermission(sub.getPermission())) {
+            sender.sendMessage(plugin.getCommand(sub.getCommand()).getPermissionMessage().replace("<permission>", sub.getPermission().getName()));
+            return true;
+        }
+
         String[] subArgs = new String[]{};
         if(args.length > pathPartCount) {
             subArgs = Arrays.copyOfRange(args, pathPartCount, args.length);
