@@ -1,7 +1,10 @@
 package de.themoep.entitydetection;
 
+import de.themoep.entitydetection.commands.ListSubCommand;
 import de.themoep.entitydetection.commands.PluginCommandExecutor;
 import de.themoep.entitydetection.commands.SearchSubCommand;
+import de.themoep.entitydetection.commands.StopSubCommand;
+import de.themoep.entitydetection.commands.TpSubCommand;
 import de.themoep.entitydetection.searcher.EntitySearch;
 import de.themoep.entitydetection.searcher.SearchResult;
 import de.themoep.entitydetection.searcher.SearchResultEntry;
@@ -59,6 +62,9 @@ public class EntityDetection extends JavaPlugin {
         }
         PluginCommandExecutor cmdEx = new PluginCommandExecutor(this);
         cmdEx.register(new SearchSubCommand(this));
+        cmdEx.register(new TpSubCommand(this));
+        cmdEx.register(new ListSubCommand(this));
+        cmdEx.register(new StopSubCommand(this));
     }
 
     public boolean startSearch(EntitySearch search) {
