@@ -63,7 +63,7 @@ public class TpSubCommand extends SubCommand {
             return true;
         }
 
-        SearchResultEntry entry = lastResult.getSortedEntries().get(i);
+        SearchResultEntry entry = lastResult.getSortedEntries().get(i - 1);
 
         try {
             Chunk chunk = entry.getChunk().toBukkit(getPlugin().getServer());
