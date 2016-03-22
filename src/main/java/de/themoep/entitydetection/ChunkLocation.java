@@ -27,8 +27,8 @@ public class ChunkLocation {
 
     public ChunkLocation(Location location) {
         this.world = location.getWorld().getName().toLowerCase();
-        this.x = location.getChunk().getX();
-        this.z = location.getChunk().getZ();
+        this.x = (int) Math.floor(location.getBlockX() / 16);
+        this.z = (int) Math.floor(location.getBlockZ() / 16);
     }
 
     public String getWorld() {
