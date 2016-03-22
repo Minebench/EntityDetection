@@ -37,7 +37,7 @@ public class PluginCommandExecutor implements CommandExecutor {
 
     public PluginCommandExecutor(EntityDetection plugin) {
         this.plugin = plugin;
-        header = ChatColor.GRAY + " " + plugin.getDescription().getAuthors().get(0) + "'s " +
+        header = ChatColor.GRAY + plugin.getDescription().getAuthors().get(0) + "'s " +
                 ChatColor.RED + plugin.getName() +
                 ChatColor.GRAY + " v" + plugin.getDescription().getVersion();
         plugin.getCommand(plugin.getName().toLowerCase()).setExecutor(this);
@@ -68,7 +68,7 @@ public class PluginCommandExecutor implements CommandExecutor {
                         continue;
                     }
                     helpText.add(ChatColor.YELLOW + sub.getUsage(label));
-                    helpText.add(ChatColor.WHITE + sub.getHelp());
+                    helpText.add(ChatColor.WHITE + " " + sub.getHelp());
                 }
             } else {
                 helpText.add("No sub commands found.");
