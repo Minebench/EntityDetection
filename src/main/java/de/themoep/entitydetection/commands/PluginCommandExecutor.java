@@ -35,11 +35,9 @@ public class PluginCommandExecutor implements CommandExecutor {
 
     public PluginCommandExecutor(EntityDetection plugin) {
         this.plugin = plugin;
-        header = ChatColor.DARK_GRAY + " " + ChatColor.STRIKETHROUGH + "---" + ChatColor.RESET +
-                ChatColor.GRAY + " " + plugin.getDescription().getAuthors().get(0) + "'s " +
+        header = ChatColor.GRAY + " " + plugin.getDescription().getAuthors().get(0) + "'s " +
                 ChatColor.RED + plugin.getName() +
-                ChatColor.GRAY + " v" + plugin.getDescription().getVersion() +
-                " " + ChatColor.DARK_GRAY  + ChatColor.STRIKETHROUGH + "---" + ChatColor.RESET;
+                ChatColor.GRAY + " v" + plugin.getDescription().getVersion();
         plugin.getCommand(plugin.getName().toLowerCase()).setExecutor(this);
     }
 
