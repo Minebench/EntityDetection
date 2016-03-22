@@ -90,9 +90,13 @@ public class PluginCommandExecutor implements CommandExecutor {
         }
 
         if(sub == null) {
-            Set<String> subCmdsStr = subCommands.keySet();
-            sender.sendMessage("Usage: /" + label + " " + Arrays.toString(subCmdsStr.toArray(new String[subCmdsStr.size()])));
-            return true;
+            if(subCommands.containsKey(cmd.getName())) {
+                Set<String> subCmdsStr = subCommands.get(cmd.getName()).keySet();
+                sender.sendMessage("Usage: /" + label + " " + Arrays.toString(subCmdsStr.toArray(new String[subCmdsStr.size()])));
+                return true;
+            } else {
+                return false;
+            }
         }
 
         String[] subArgs = new String[]{};
