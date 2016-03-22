@@ -109,7 +109,7 @@ public class EntityDetection extends JavaPlugin {
 
         int start = page * 10;
         if(serverIsSpigot && sender instanceof Player) {
-            String searchedTypes = "";
+            String searchedTypes = ChatColor.YELLOW + "Entity Types:\n";
             Iterator<EntityType> typeIter = result.getSearchedEntities().iterator();
             while(typeIter.hasNext()) {
                 searchedTypes += ChatColor.DARK_PURPLE + Utils.enumToHumanName(typeIter.next());
