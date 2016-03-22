@@ -8,6 +8,7 @@ import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -44,7 +45,7 @@ public class PluginCommandExecutor implements CommandExecutor {
 
     public void register(SubCommand sub) {
         if(!subCommands.containsKey(sub.getCommand())) {
-            subCommands.put(sub.getCommand(), new HashMap<String, SubCommand>());
+            subCommands.put(sub.getCommand(), new LinkedHashMap<String, SubCommand>());
         }
         subCommands.get(sub.getCommand()).put(sub.getPath(), sub);
         try {
