@@ -7,6 +7,7 @@ import de.themoep.entitydetection.searcher.SearchResultEntry;
 import de.themoep.entitydetection.searcher.SearchType;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -50,22 +51,47 @@ public class ListSubCommand extends SubCommand {
             }
             if(args.length > 1) {
                 lastName = args[1];
-                try {
-                    result = getPlugin().getResult(EntityType.valueOf(args[1].toUpperCase()));
-                } catch(IllegalArgumentException notAnEntityType) {
-                    if(args[1].endsWith("s")) {
-                        args[1] = args[1].substring(0, args[1].length() - 1);
-                    }
+
+                String arg = args[1];
+
+                if(arg.endsWith("s")) {
+                    arg = arg.substring(0, arg.length() - 1);
+                }
+
+                boolean found = false;
+                if (!found) {
                     try {
-                        result = getPlugin().getResult(SearchType.valueOf(args[1].toUpperCase()));
-                    } catch(IllegalArgumentException notASearchType) {
-                        try {
-                            result = getPlugin().getResult(SearchType.getByAlias(args[1].toUpperCase()));
-                        } catch(IllegalArgumentException notAnAlias) {
-                            sender.sendMessage(ChatColor.YELLOW + args[1] + ChatColor.RED + " is neither a valid EntityType, SearchType or alias of a search type?");
-                            return false;
-                        }
-                    }
+                        result = getPlugin().getResult(EntityType.valueOf(arg.toUpperCase()).toString());
+                        found = true;
+                    } catch (IllegalArgumentException ignored) {}
+                }
+                if (!found) {
+                    try {
+                        result = getPlugin().getResult(Class.forName("org.bukkit.block." + arg, false, getPlugin().getServer().getClass().getClassLoader()).getSimpleName()); //TODO: This is case sensitive :(
+                        found = true;
+                    } catch (ClassNotFoundException ignored) {}
+                }
+                if (!found) {
+                    try {
+                        result = getPlugin().getResult(SearchType.valueOf(arg.toUpperCase()));
+                        found = true;
+                    } catch (IllegalArgumentException ignored) {}
+                }
+                if (!found) {
+                    try {
+                        result = getPlugin().getResult(SearchType.getByAlias(arg.toUpperCase()));
+                        found = true;
+                    } catch(IllegalArgumentException ignored) {}
+                }
+                if (!found) {
+                    try {
+                        result = getPlugin().getResult(Material.valueOf(arg.toUpperCase()).toString()); //TODO: This doesn't check for tile entities
+                        found = true;
+                    } catch (IllegalArgumentException ignored) {}
+                }
+                if (!found) {
+                    sender.sendMessage(ChatColor.YELLOW + arg + ChatColor.RED + " is neither a valid EntityType, Material, BlockState, SearchType or alias of a search type?");
+                    return false;
                 }
             }
         }

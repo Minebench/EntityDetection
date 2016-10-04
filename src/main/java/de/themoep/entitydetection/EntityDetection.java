@@ -86,8 +86,8 @@ public class EntityDetection extends JavaPlugin {
 
     public void addResult(SearchResult result) {
         if(result.getType() == SearchType.CUSTOM && result.getSearched().size() == 1) {
-            Set<EntityType> searchedEntities = result.getSearched();
-            customResults.put(searchedEntities.toArray(new EntityType[searchedEntities.size()])[0].toString(), result);
+            Set<String> searchedEntities = result.getSearched();
+            customResults.put(searchedEntities.toArray(new String[searchedEntities.size()])[0], result);
         } else {
             results.put(result.getType(), result);
         }
@@ -110,7 +110,7 @@ public class EntityDetection extends JavaPlugin {
         int start = page * 10;
         if(serverIsSpigot && sender instanceof Player) {
             String searchedTypes = ChatColor.YELLOW + "Entity Types:\n";
-            Iterator<EntityType> typeIter = result.getSearched().iterator();
+            Iterator<String> typeIter = result.getSearched().iterator();
             while(typeIter.hasNext()) {
                 searchedTypes += ChatColor.DARK_PURPLE + Utils.enumToHumanName(typeIter.next());
                 if(typeIter.hasNext()) {
@@ -199,7 +199,7 @@ public class EntityDetection extends JavaPlugin {
         return lastResultViewed.get(sender.getName());
     }
 
-    public SearchResult getResult(EntityType type) {
+    public SearchResult getResult(String type) {
         return customResults.get(type);
     }
 
