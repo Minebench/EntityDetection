@@ -35,12 +35,12 @@ public class SearchSubCommand extends SubCommand {
         EntitySearch search = new EntitySearch(getPlugin(), sender);
         if(args.length > 0) {
             for(String arg : args) {
+                if(arg.endsWith("s")) {
+                    arg = arg.substring(0, arg.length() - 1);
+                }
                 try {
                     search.addSearchedType(EntityType.valueOf(arg.toUpperCase()));
                 } catch(IllegalArgumentException notAnEntityType) {
-                    if(arg.endsWith("s")) {
-                        arg = arg.substring(0, arg.length() - 1);
-                    }
                     try {
                         search.setType(SearchType.valueOf(arg.toUpperCase()));
                     } catch(IllegalArgumentException notASearchType) {
