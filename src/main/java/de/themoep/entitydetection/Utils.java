@@ -32,7 +32,16 @@ public class Utils {
      * @return The converted name; capitalizes each word and replaces underscores with spaces
      */
     public static String enumToHumanName(Enum convert) {
-        String[] parts = convert.toString().split("_");
+        return enumToHumanName(convert.toString());
+    }
+
+    /**
+     * Converts an uppercase enum to a human readable string
+     * @param convert The name of the Enum to convert
+     * @return The converted name; capitalizes each word and replaces underscores with spaces
+     */
+    public static String enumToHumanName(String convert) {
+        String[] parts = convert.split("_");
         if(parts.length == 0) {
             return "";
         }

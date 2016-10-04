@@ -1,12 +1,15 @@
 package de.themoep.entitydetection.searcher;
 
 import de.themoep.entitydetection.ChunkLocation;
+import org.bukkit.Material;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,7 +31,7 @@ import java.util.Set;
  */
 public class SearchResult {
     private SearchType type;
-    private Set<EntityType> searchedEntities;
+    private Set<String> searched;
     private long startTime;
     private long endTime = 0;
 
@@ -44,7 +47,16 @@ public class SearchResult {
 
     public SearchResult(EntitySearch search) {
         type = search.getType();
-        searchedEntities = search.getSearchedEntities();
+        searched = new HashSet<String>();
+        for (EntityType e : search.getSearchedEntities()) {
+            searched.add(e.toString());
+        }
+        for (Material m : search.getSearchedMaterial()) {
+            searched.add(m.toString());
+        }
+        for (Class<?> b : search.getSearchedBlockStates()) {
+            searched.add(b.getSimpleName());
+        }
         startTime = search.getStartTime();
     }
 
@@ -53,11 +65,22 @@ public class SearchResult {
      * @param entity The entity to add
      */
     public void addEntity(Entity entity) {
-        ChunkLocation chunkLoc = new ChunkLocation(entity.getLocation());
+        add(new ChunkLocation(entity.getLocation()), entity.getType().toString());
+    }
+
+    /**
+     * Add a BlockState to this result
+     * @param blockState The entity to add
+     */
+    public void addBlockState(BlockState blockState) {
+        add(new ChunkLocation(blockState.getLocation()), blockState.getType().toString());
+    }
+
+    public void add(ChunkLocation chunkLoc, String type) {
         if(!resultEntryMap.containsKey(chunkLoc)) {
             resultEntryMap.put(chunkLoc, new SearchResultEntry(chunkLoc));
         }
-        resultEntryMap.get(chunkLoc).increment(entity.getType());
+        resultEntryMap.get(chunkLoc).increment(type);
     }
 
     public SearchType getType() {
@@ -76,8 +99,8 @@ public class SearchResult {
         return getEndTime() - getStartTime();
     }
 
-    public Set<EntityType> getSearchedEntities() {
-        return searchedEntities;
+    public Set<String> getSearched() {
+        return searched;
     }
 
     /**

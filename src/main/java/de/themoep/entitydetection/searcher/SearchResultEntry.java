@@ -1,7 +1,6 @@
 package de.themoep.entitydetection.searcher;
 
 import de.themoep.entitydetection.ChunkLocation;
-import org.bukkit.entity.EntityType;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,20 +26,20 @@ import java.util.Map;
  */
 public class SearchResultEntry implements Comparable<SearchResultEntry> {
     private ChunkLocation chunk;
-    private Map<EntityType, Integer> entityCount = new HashMap<EntityType, Integer>();
-    private List<Map.Entry<EntityType, Integer>> finalList = new ArrayList<Map.Entry<EntityType, Integer>>();
+    private Map<String, Integer> entryCount = new HashMap<String, Integer>();
+    private List<Map.Entry<String, Integer>> finalList = new ArrayList<Map.Entry<String, Integer>>();
     private int size = 0;
 
     SearchResultEntry(ChunkLocation chunk) {
         this.chunk = chunk;
     }
 
-    public void increment(EntityType type) {
+    public void increment(String type) {
         size++;
-        if(!entityCount.containsKey(type)) {
-            entityCount.put(type, 1);
+        if(!entryCount.containsKey(type)) {
+            entryCount.put(type, 1);
         } else {
-            entityCount.put(type, entityCount.get(type) + 1);
+            entryCount.put(type, entryCount.get(type) + 1);
         }
     }
 
@@ -52,14 +51,14 @@ public class SearchResultEntry implements Comparable<SearchResultEntry> {
         return chunk;
     }
 
-    public List<Map.Entry<EntityType, Integer>> getEntityCount() {
+    public List<Map.Entry<String, Integer>> getEntryCount() {
         return finalList;
     }
 
     public void sort() {
-        finalList = new ArrayList<Map.Entry<EntityType, Integer>>(entityCount.entrySet());
-        Collections.sort(finalList, Collections.reverseOrder(new Comparator<Map.Entry<EntityType, Integer>>() {
-            public int compare(Map.Entry<EntityType, Integer> o1, Map.Entry<EntityType, Integer> o2) {
+        finalList = new ArrayList<Map.Entry<String, Integer>>(entryCount.entrySet());
+        Collections.sort(finalList, Collections.reverseOrder(new Comparator<Map.Entry<String, Integer>>() {
+            public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
                 return Integer.compare(o1.getValue(), o2.getValue());
             }
         }));

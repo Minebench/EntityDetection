@@ -50,7 +50,7 @@ public class EntityDetection extends JavaPlugin {
     private EntitySearch currentSearch;
 
     private Map<SearchType, SearchResult> results = new HashMap<SearchType, SearchResult>();
-    private Map<EntityType, SearchResult> customResults = new HashMap<EntityType, SearchResult>();
+    private Map<String, SearchResult> customResults = new HashMap<String, SearchResult>();
     private Map<String, SearchResult> lastResultViewed = new HashMap<String, SearchResult>();
 
     private boolean serverIsSpigot = true;
@@ -85,9 +85,9 @@ public class EntityDetection extends JavaPlugin {
     }
 
     public void addResult(SearchResult result) {
-        if(result.getType() == SearchType.CUSTOM && result.getSearchedEntities().size() == 1) {
-            Set<EntityType> searchedEntities = result.getSearchedEntities();
-            customResults.put(searchedEntities.toArray(new EntityType[searchedEntities.size()])[0], result);
+        if(result.getType() == SearchType.CUSTOM && result.getSearched().size() == 1) {
+            Set<EntityType> searchedEntities = result.getSearched();
+            customResults.put(searchedEntities.toArray(new EntityType[searchedEntities.size()])[0].toString(), result);
         } else {
             results.put(result.getType(), result);
         }
@@ -110,7 +110,7 @@ public class EntityDetection extends JavaPlugin {
         int start = page * 10;
         if(serverIsSpigot && sender instanceof Player) {
             String searchedTypes = ChatColor.YELLOW + "Entity Types:\n";
-            Iterator<EntityType> typeIter = result.getSearchedEntities().iterator();
+            Iterator<EntityType> typeIter = result.getSearched().iterator();
             while(typeIter.hasNext()) {
                 searchedTypes += ChatColor.DARK_PURPLE + Utils.enumToHumanName(typeIter.next());
                 if(typeIter.hasNext()) {
@@ -148,7 +148,7 @@ public class EntityDetection extends JavaPlugin {
                             .color(net.md_5.bungee.api.ChatColor.RED);
 
                     int entitiesListed = 0;
-                    for(Entry<EntityType, Integer> entityEntry : entry.getEntityCount()) {
+                    for(Entry<String, Integer> entityEntry : entry.getEntryCount()) {
                         builder.append(Utils.enumToHumanName(entityEntry.getKey()) + "[")
                                 .color(net.md_5.bungee.api.ChatColor.GREEN)
                                 .append(entityEntry.getValue().toString())
@@ -179,7 +179,7 @@ public class EntityDetection extends JavaPlugin {
                     String lineText = ChatColor.WHITE + " " + (line + 1) + ": " + ChatColor.YELLOW + chunkEntry.getChunk() + " " + ChatColor.RED + chunkEntry.getSize() + " ";
 
                     int entitiesListed = 0;
-                    for(Entry<EntityType, Integer> entityEntry : chunkEntry.getEntityCount()) {
+                    for(Entry<String, Integer> entityEntry : chunkEntry.getEntryCount()) {
                         lineText += ChatColor.GREEN + Utils.enumToHumanName(entityEntry.getKey()) + "[" + ChatColor.WHITE + entityEntry.getValue().toString() + ChatColor.GREEN + "] ";
                         entitiesListed++;
                         if(entitiesListed >= 3)

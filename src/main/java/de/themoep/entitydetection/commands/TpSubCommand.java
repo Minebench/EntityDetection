@@ -6,6 +6,8 @@ import de.themoep.entitydetection.searcher.SearchResult;
 import de.themoep.entitydetection.searcher.SearchResultEntry;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
+import org.bukkit.Location;
+import org.bukkit.block.BlockState;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -68,18 +70,33 @@ public class TpSubCommand extends SubCommand {
         try {
             Chunk chunk = entry.getChunk().toBukkit(getPlugin().getServer());
 
+            Location loc = null;
+
             for(Entity e : chunk.getEntities()) {
-                if(e.getType() == entry.getEntityCount().get(0).getKey()) {
-                    ((Player) sender).teleport(e, PlayerTeleportEvent.TeleportCause.PLUGIN);
-                    sender.sendMessage(
-                            ChatColor.GREEN + "Teleported to entry " + ChatColor.WHITE + i + ": " +
-                            ChatColor.YELLOW + entry.getChunk() + " " + ChatColor.RED + entry.getSize() + " " +
-                            ChatColor.GREEN + Utils.enumToHumanName(entry.getEntityCount().get(0).getKey()) + "[" +
-                            ChatColor.WHITE + entry.getEntityCount().get(0).getValue() + ChatColor.GREEN + "]"
-                    );
-                    return true;
+                if(e.getType().toString().equals(entry.getEntryCount().get(0).getKey())) {
+                    loc = e.getLocation();
+                    break;
                 }
             }
+
+            for (BlockState b : chunk.getTileEntities()) {
+                if(b.getType().toString().equals(entry.getEntryCount().get(0).getKey())) {
+                    loc = b.getLocation().add(0, 1, 0);
+                    break;
+                }
+            }
+
+            if (loc == null) {
+                loc = chunk.getWorld().getHighestBlockAt(chunk.getX() * 16 + 8, chunk.getZ() * 16 + 8).getLocation().add(0, 2, 0);
+            }
+
+            ((Player) sender).teleport(loc, PlayerTeleportEvent.TeleportCause.PLUGIN);
+            sender.sendMessage(
+                    ChatColor.GREEN + "Teleported to entry " + ChatColor.WHITE + i + ": " +
+                            ChatColor.YELLOW + entry.getChunk() + " " + ChatColor.RED + entry.getSize() + " " +
+                            ChatColor.GREEN + Utils.enumToHumanName(entry.getEntryCount().get(0).getKey()) + "[" +
+                            ChatColor.WHITE + entry.getEntryCount().get(0).getValue() + ChatColor.GREEN + "]"
+            );
 
         } catch(IllegalArgumentException e) {
             sender.sendMessage(ChatColor.RED + e.getMessage());

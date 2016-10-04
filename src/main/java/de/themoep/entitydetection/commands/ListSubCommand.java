@@ -31,7 +31,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 public class ListSubCommand extends SubCommand {
     public ListSubCommand(EntityDetection plugin) {
         super(plugin, plugin.getName().toLowerCase(), "list",
-                "[<page> [monster|animal|misc|block|all| <entitytype>]]",
+                "[<page> [monster|animal|misc|block|tiles|all| <type>]]",
                 "Lists the last result. Specify a type to get a specific one."
         );
     }

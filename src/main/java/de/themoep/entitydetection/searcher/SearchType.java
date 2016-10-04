@@ -1,5 +1,6 @@
 package de.themoep.entitydetection.searcher;
 
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Ambient;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Entity;
@@ -15,8 +16,11 @@ import org.bukkit.entity.Slime;
 import org.bukkit.entity.WaterMob;
 import org.bukkit.entity.Weather;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -72,19 +76,31 @@ public enum SearchType {
             },
             new Class[]{Hanging.class}
     ),
-    ALL(
+    ENTITY(
+            new String[]{"ENTITIES"},
             EntityType.values()
+    ),
+    TILE(
+            new String[]{"BLOCKSTATE"},
+            new Class[]{BlockState.class}
+    ),
+    ALL(
+            EntityType.values(),
+            new Class[]{BlockState.class}
     ),
     CUSTOM;
 
     private String[] aliases;
 
     private EntityType[] entityTypes;
+    private Class<?>[] blockStates;
 
     SearchType(String[] aliases, EntityType[] eTypes, Class[] classes) {
         this.aliases = aliases;
         Set<EntityType> typeSet = new HashSet<EntityType>();
         Collections.addAll(typeSet, eTypes);
+
+        List<Class> classList = Arrays.asList(classes);
 
         if(classes.length > 0) {
             for(EntityType et : EntityType.values()) {
@@ -95,15 +111,19 @@ public enum SearchType {
                 if(e == null) {
                     continue;
                 }
-                for(Class eClass : classes) {
+                Iterator<Class> classIt = classList.iterator();
+                while (classIt.hasNext()){
+                    Class eClass = classIt.next();
                     if(eClass.isAssignableFrom(e)) {
                         typeSet.add(et);
+                        classIt.remove();
                         break;
                     }
                 }
             }
         }
         entityTypes = typeSet.toArray(new EntityType[typeSet.size()]);
+        blockStates = classList.toArray(new Class[classList.size()]);
     }
 
     SearchType(Class<? extends Entity>[] classes) {
@@ -120,6 +140,10 @@ public enum SearchType {
 
     SearchType(EntityType[] types, Class<? extends Entity>[] classes) {
         this(new String[]{}, types, classes);
+    }
+
+    SearchType(String[] aliases, EntityType[] entityTypes) {
+        this(aliases, entityTypes, new Class[]{});
     }
 
     SearchType() {
@@ -150,5 +174,14 @@ public enum SearchType {
      */
     public EntityType[] getEntities() {
         return entityTypes;
+    }
+
+    /**
+     * Get all the classes of tile entity blockstates that belong to this search type
+     *
+     * @return An Array of Classes, CUSTOM's list is empty and should be filled by you per search
+     */
+    public Class<?>[] getBlockStates() {
+        return blockStates;
     }
 }

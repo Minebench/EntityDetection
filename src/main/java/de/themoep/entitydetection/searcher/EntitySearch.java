@@ -2,7 +2,10 @@ package de.themoep.entitydetection.searcher;
 
 import de.themoep.entitydetection.EntityDetection;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Chunk;
+import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.BlockState;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -10,6 +13,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -35,9 +39,12 @@ public class EntitySearch extends BukkitRunnable {
     private final CommandSender owner;
     private SearchType type = SearchType.CUSTOM;
     private Set<EntityType> searchedEntities = new HashSet<EntityType>();
+    private Set<Class<?>> searchedBlockStates = new HashSet<Class<?>>();
+    private Set<Material> searchedMaterial = new HashSet<Material>();
     private long startTime;
     private boolean running = true;
     private List<Entity> entities = new ArrayList<Entity>();
+    private List<BlockState> blockStates = new ArrayList<BlockState>();
 
     public EntitySearch(EntityDetection plugin, CommandSender sender) {
         this.plugin = plugin;
@@ -49,12 +56,13 @@ public class EntitySearch extends BukkitRunnable {
     }
 
     public void setType(SearchType type) {
-        if(getSearchedEntities().size() == 0) {
+        if(getSearchedEntities().size() == 0 && getSearchedBlockStates().size() == 0 && getSearchedMaterial().size() == 0) {
             this.type = type;
         } else {
             this.type = SearchType.CUSTOM;
         }
         Collections.addAll(searchedEntities, type.getEntities());
+        Collections.addAll(searchedBlockStates, type.getBlockStates());
     }
 
     public void addSearchedType(EntityType type) {
@@ -62,8 +70,26 @@ public class EntitySearch extends BukkitRunnable {
         this.type = SearchType.CUSTOM;
     }
 
+    public void addSearchedBlockState(Class<?> c) {
+        searchedBlockStates.add(c);
+        this.type = SearchType.CUSTOM;
+    }
+
+    public void addSearchedMaterial(Material material) {
+        searchedMaterial.add(material);
+        this.type = SearchType.CUSTOM;
+    }
+
     public Set<EntityType> getSearchedEntities() {
         return searchedEntities;
+    }
+
+    public Set<Class<?>> getSearchedBlockStates() {
+        return searchedBlockStates;
+    }
+
+    public Set<Material> getSearchedMaterial() {
+        return searchedMaterial;
     }
 
     public String getOwner() {
@@ -83,8 +109,17 @@ public class EntitySearch extends BukkitRunnable {
     }
 
     public BukkitTask start() {
-        for(World world : plugin.getServer().getWorlds()) {
-            entities.addAll(world.getEntities());
+        if (searchedEntities.size() > 0) {
+            for (World world : plugin.getServer().getWorlds()) {
+                entities.addAll(world.getEntities());
+            }
+        }
+        if (searchedBlockStates.size() > 0 || searchedMaterial.size() > 0) {
+            for (World world : plugin.getServer().getWorlds()) {
+                for (Chunk chunk : world.getLoadedChunks()) {
+                    blockStates.addAll(Arrays.asList(chunk.getTileEntities()));
+                }
+            }
         }
         return runTaskAsynchronously(plugin);
     }
@@ -111,6 +146,15 @@ public class EntitySearch extends BukkitRunnable {
             }
             if(searchedEntities.contains(e.getType())) {
                 result.addEntity(e);
+            }
+        }
+
+        for (BlockState blockState : blockStates) {
+            if (!running) {
+                return;
+            }
+            if (searchedBlockStates.contains(BlockState.class) || searchedMaterial.contains(blockState.getType()) || searchedBlockStates.contains(blockState.getClass())) {
+                result.addBlockState(blockState);
             }
         }
 

@@ -4,6 +4,7 @@ import de.themoep.entitydetection.EntityDetection;
 import de.themoep.entitydetection.searcher.EntitySearch;
 import de.themoep.entitydetection.searcher.SearchType;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 
@@ -25,7 +26,7 @@ import org.bukkit.entity.EntityType;
 public class SearchSubCommand extends SubCommand {
     public SearchSubCommand(EntityDetection plugin) {
         super(plugin, plugin.getName().toLowerCase(), "search",
-                "[monster|passive|misc|block|all| <entitytype>]",
+                "[monster|passive|misc|block|tile|entity|all| <entitytype>]",
                 "Search for groups of entities. Default is monster."
         );
     }
@@ -35,21 +36,42 @@ public class SearchSubCommand extends SubCommand {
         EntitySearch search = new EntitySearch(getPlugin(), sender);
         if(args.length > 0) {
             for(String arg : args) {
-                if(arg.endsWith("s")) {
+                if (arg.endsWith("s")) {
                     arg = arg.substring(0, arg.length() - 1);
                 }
-                try {
-                    search.addSearchedType(EntityType.valueOf(arg.toUpperCase()));
-                } catch(IllegalArgumentException notAnEntityType) {
+                boolean found = false;
+                if (!found) {
+                    try {
+                        search.addSearchedType(EntityType.valueOf(arg.toUpperCase()));
+                        found = true;
+                    } catch (IllegalArgumentException ignored) {}
+                }
+                if (!found) {
+                    try {
+                        search.addSearchedBlockState(Class.forName("org.bukkit.block." + arg, false, getPlugin().getServer().getClass().getClassLoader())); //TODO: This is case sensitive :(
+                        found = true;
+                    } catch (ClassNotFoundException ignored) {}
+                }
+                if (!found) {
                     try {
                         search.setType(SearchType.valueOf(arg.toUpperCase()));
-                    } catch(IllegalArgumentException notASearchType) {
-                        try {
-                            search.setType(SearchType.getByAlias(arg.toUpperCase()));
-                        } catch(IllegalArgumentException notAnAlias) {
-                            return false;
-                        }
-                    }
+                        found = true;
+                    } catch (IllegalArgumentException ignored) {}
+                }
+                if (!found) {
+                    try {
+                        search.setType(SearchType.getByAlias(arg.toUpperCase()));
+                        found = true;
+                    } catch(IllegalArgumentException ignored) {}
+                }
+                if (!found) {
+                    try {
+                        search.addSearchedMaterial(Material.valueOf(arg.toUpperCase())); //TODO: This doesn't check for tile entities
+                        found = true;
+                    } catch (IllegalArgumentException ignored) {}
+                }
+                if (!found) {
+                    return false;
                 }
             }
         } else {
