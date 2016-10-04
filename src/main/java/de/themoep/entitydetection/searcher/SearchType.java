@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -100,7 +101,7 @@ public enum SearchType {
         Set<EntityType> typeSet = new HashSet<EntityType>();
         Collections.addAll(typeSet, eTypes);
 
-        List<Class> classList = Arrays.asList(classes);
+        List<Class> classList = new LinkedList<Class>(Arrays.asList(classes));
 
         if(classes.length > 0) {
             for(EntityType et : EntityType.values()) {
