@@ -189,7 +189,7 @@ public class EntityDetection extends JavaPlugin {
                     msg.add(lineText);
                 }
             } else {
-                msg.add(ChatColor.RED + " No entities of that type found!");
+                msg.add(ChatColor.RED + " Nothing of that type found!");
             }
             sender.sendMessage(msg.toArray(new String[msg.size()]));
         }
