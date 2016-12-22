@@ -6,7 +6,7 @@
 
     <groupId>de.themoep</groupId>
     <artifactId>entitydetection</artifactId>
-    <version>1.1</version>
+    <version>1.1.1</version>
     <description>Bukkit plugin to find groups of mobs, animals or other (tile) entities.</description>
     <name>EntityDetection</name>
 

@@ -112,12 +112,9 @@ public enum SearchType {
                 if(e == null) {
                     continue;
                 }
-                Iterator<Class> classIt = classList.iterator();
-                while (classIt.hasNext()){
-                    Class eClass = classIt.next();
-                    if(eClass.isAssignableFrom(e)) {
+                for (Class eClass : classList) {
+                    if (eClass.isAssignableFrom(e)) {
                         typeSet.add(et);
-                        classIt.remove();
                         break;
                     }
                 }
