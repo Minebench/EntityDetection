@@ -1,7 +1,7 @@
 name: ${project.name}
 main: de.themoep.entitydetection.EntityDetection
 version: '${minecraft.plugin.version}'
-description: ${project.description}
+description: '${project.description}'
 authors: [Phoenix616]
 commands:
    entitydetection:
