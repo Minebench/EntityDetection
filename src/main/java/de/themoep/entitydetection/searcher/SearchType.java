@@ -14,12 +14,10 @@ import org.bukkit.entity.NPC;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Slime;
 import org.bukkit.entity.WaterMob;
-import org.bukkit.entity.Weather;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -65,8 +63,7 @@ public enum SearchType {
             new Class[]{
                     Projectile.class,
                     Minecart.class,
-                    Item.class,
-                    Weather.class
+                    Item.class
             }
     ),
     BLOCK(
