@@ -1,10 +1,11 @@
 package de.themoep.entitydetection.searcher;
 
-import de.themoep.entitydetection.ChunkLocation;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,7 +30,7 @@ import java.util.Set;
  * You should have received a copy of the Mozilla Public License v2.0
  * along with this program. If not, see <http://mozilla.org/MPL/2.0/>.
  */
-public class SearchResult {
+public abstract class SearchResult<T> {
     private SearchType type;
     private Set<String> searched;
     private long startTime;
@@ -38,12 +39,12 @@ public class SearchResult {
     /**
      * Working search map, use resultEntryList after sorting this result!
      */
-    private Map<ChunkLocation, SearchResultEntry> resultEntryMap = new HashMap<ChunkLocation, SearchResultEntry>();
+    protected Map<T, SearchResultEntry<T>> resultEntryMap = new HashMap<>();
 
     /**
      * Sorted, highest entity count per chunks first, only propagated after running .sort()
      */
-    private List<SearchResultEntry> resultEntryList = new ArrayList<SearchResultEntry>();
+    protected List<SearchResultEntry<T>> resultEntryList = new ArrayList<>();
 
     public SearchResult(EntitySearch search) {
         type = search.getType();
@@ -64,24 +65,15 @@ public class SearchResult {
      * Add an entity to this result
      * @param entity The entity to add
      */
-    public void addEntity(Entity entity) {
-        add(new ChunkLocation(entity.getLocation()), entity.getType().toString());
-    }
+    public abstract void addEntity(Entity entity);
 
     /**
      * Add a BlockState to this result
      * @param blockState The entity to add
      */
-    public void addBlockState(BlockState blockState) {
-        add(new ChunkLocation(blockState.getLocation()), blockState.getType().toString());
-    }
+    public abstract void addBlockState(BlockState blockState);
 
-    public void add(ChunkLocation chunkLoc, String type) {
-        if(!resultEntryMap.containsKey(chunkLoc)) {
-            resultEntryMap.put(chunkLoc, new SearchResultEntry(chunkLoc));
-        }
-        resultEntryMap.get(chunkLoc).increment(type);
-    }
+    public abstract void add(Location location, String type);
 
     public SearchType getType() {
         return type;
@@ -107,7 +99,7 @@ public class SearchResult {
      * Get a list of entries for every chunk, only propagated after calling sort()
      * @return An ArrayList of the chunks sorted from the highest
      */
-    public List<SearchResultEntry> getSortedEntries() {
+    public List<SearchResultEntry<T>> getSortedEntries() {
         return resultEntryList;
     }
 
@@ -115,13 +107,14 @@ public class SearchResult {
      * Sort the results and set the end time
      */
     public void sort() {
-        for(SearchResultEntry chunkEntry : resultEntryMap.values()) {
+        for(SearchResultEntry<?> chunkEntry : resultEntryMap.values()) {
             chunkEntry.sort();
         }
-        resultEntryList = new ArrayList<SearchResultEntry>(resultEntryMap.values());
+        resultEntryList = new ArrayList<>(resultEntryMap.values());
         Collections.sort(resultEntryList, Collections.reverseOrder());
 
         endTime = System.currentTimeMillis();
     }
 
+    public abstract void teleport(Player sender, SearchResultEntry<?> entry, int i);
 }

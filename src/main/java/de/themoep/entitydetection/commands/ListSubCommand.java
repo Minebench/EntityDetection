@@ -39,7 +39,7 @@ public class ListSubCommand extends SubCommand {
 
     @Override
     public boolean execute(CommandSender sender, String[] args) {
-        SearchResult result = getPlugin().getResult(sender);
+        SearchResult<?> result = getPlugin().getResult(sender);
         int page = 1;
         String lastName = sender.getName();
         if(args.length > 0) {

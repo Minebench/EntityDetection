@@ -1,7 +1,5 @@
 package de.themoep.entitydetection.searcher;
 
-import de.themoep.entitydetection.ChunkLocation;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -24,14 +22,14 @@ import java.util.Map;
  * You should have received a copy of the Mozilla Public License v2.0
  * along with this program. If not, see <http://mozilla.org/MPL/2.0/>.
  */
-public class SearchResultEntry implements Comparable<SearchResultEntry> {
-    private ChunkLocation chunk;
+public class SearchResultEntry<T> implements Comparable<SearchResultEntry<T>> {
+    private T location;
     private Map<String, Integer> entryCount = new HashMap<String, Integer>();
     private List<Map.Entry<String, Integer>> finalList = new ArrayList<Map.Entry<String, Integer>>();
     private int size = 0;
 
-    SearchResultEntry(ChunkLocation chunk) {
-        this.chunk = chunk;
+    SearchResultEntry(T location) {
+        this.location = location;
     }
 
     public void increment(String type) {
@@ -47,8 +45,8 @@ public class SearchResultEntry implements Comparable<SearchResultEntry> {
         return size;
     }
 
-    public ChunkLocation getChunk() {
-        return chunk;
+    public T getChunk() {
+        return location;
     }
 
     public List<Map.Entry<String, Integer>> getEntryCount() {
@@ -56,12 +54,8 @@ public class SearchResultEntry implements Comparable<SearchResultEntry> {
     }
 
     public void sort() {
-        finalList = new ArrayList<Map.Entry<String, Integer>>(entryCount.entrySet());
-        Collections.sort(finalList, Collections.reverseOrder(new Comparator<Map.Entry<String, Integer>>() {
-            public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
-                return Integer.compare(o1.getValue(), o2.getValue());
-            }
-        }));
+        finalList = new ArrayList<>(entryCount.entrySet());
+        finalList.sort(Collections.reverseOrder(Comparator.comparingInt(Map.Entry::getValue)));
     }
 
     public int compareTo(SearchResultEntry o) {

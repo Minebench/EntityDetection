@@ -16,7 +16,6 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -49,9 +48,9 @@ public class EntityDetection extends JavaPlugin {
 
     private EntitySearch currentSearch;
 
-    private Map<SearchType, SearchResult> results = new HashMap<SearchType, SearchResult>();
-    private Map<String, SearchResult> customResults = new HashMap<String, SearchResult>();
-    private Map<String, SearchResult> lastResultViewed = new HashMap<String, SearchResult>();
+    private Map<SearchType, SearchResult<?>> results = new HashMap<>();
+    private Map<String, SearchResult<?>> customResults = new HashMap<>();
+    private Map<String, SearchResult<?>> lastResultViewed = new HashMap<>();
 
     private boolean serverIsSpigot = true;
 
@@ -84,7 +83,7 @@ public class EntityDetection extends JavaPlugin {
         return true;
     }
 
-    public void addResult(SearchResult result) {
+    public void addResult(SearchResult<?> result) {
         if(result.getType() == SearchType.CUSTOM && result.getSearched().size() == 1) {
             Set<String> searchedEntities = result.getSearched();
             customResults.put(searchedEntities.toArray(new String[searchedEntities.size()])[0], result);
@@ -97,12 +96,12 @@ public class EntityDetection extends JavaPlugin {
         return currentSearch;
     }
 
-    public void send(CommandSender sender, SearchResult result) {
+    public void send(CommandSender sender, SearchResult<?> result) {
         send(sender, result, 0);
     }
 
 
-    public void send(CommandSender sender, SearchResult result, int page) {
+    public void send(CommandSender sender, SearchResult<?> result, int page) {
         lastResultViewed.put(sender.getName(), result);
 
         String dateStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(result.getEndTime()));
@@ -124,10 +123,10 @@ public class EntityDetection extends JavaPlugin {
                     .append("from " + dateStr + ":")
                     .color(net.md_5.bungee.api.ChatColor.WHITE);
 
-            List<SearchResultEntry> results = result.getSortedEntries();
+            List<? extends SearchResultEntry<?>> results = result.getSortedEntries();
             if(results.size() > 0) {
                 for(int line = start; line < start + 10 && line < results.size(); line++) {
-                    SearchResultEntry entry = results.get(line);
+                    SearchResultEntry<?> entry = results.get(line);
 
                     builder.append("\n")
                             .retain(ComponentBuilder.FormatRetention.NONE)
@@ -171,10 +170,10 @@ public class EntityDetection extends JavaPlugin {
             List<String> msg = new ArrayList<String>();
             msg.add(ChatColor.GREEN + Utils.enumToHumanName(result.getType()) + " search " + ChatColor.WHITE + "from " + dateStr + ":");
 
-            List<SearchResultEntry> chunkEntries = result.getSortedEntries();
+            List<? extends SearchResultEntry<?>> chunkEntries = result.getSortedEntries();
             if(chunkEntries.size() > 0) {
                 for(int line = start; line < start + 10 && line < chunkEntries.size(); line++) {
-                    SearchResultEntry chunkEntry = chunkEntries.get(line);
+                    SearchResultEntry<?> chunkEntry = chunkEntries.get(line);
 
                     String lineText = ChatColor.WHITE + " " + (line + 1) + ": " + ChatColor.YELLOW + chunkEntry.getChunk() + " " + ChatColor.RED + chunkEntry.getSize() + " ";
 
@@ -195,15 +194,15 @@ public class EntityDetection extends JavaPlugin {
         }
     }
 
-    public SearchResult getResult(CommandSender sender) {
+    public SearchResult<?> getResult(CommandSender sender) {
         return lastResultViewed.get(sender.getName());
     }
 
-    public SearchResult getResult(String type) {
+    public SearchResult<?> getResult(String type) {
         return customResults.get(type);
     }
 
-    public SearchResult getResult(SearchType type) {
+    public SearchResult<?> getResult(SearchType type) {
         return results.get(type);
     }
 }

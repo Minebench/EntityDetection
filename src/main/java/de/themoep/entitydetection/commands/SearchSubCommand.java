@@ -3,10 +3,12 @@ package de.themoep.entitydetection.commands;
 import de.themoep.entitydetection.EntityDetection;
 import de.themoep.entitydetection.searcher.EntitySearch;
 import de.themoep.entitydetection.searcher.SearchType;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
+import org.bukkit.plugin.Plugin;
 
 /**
  * Copyright 2016 Max Lee (https://github.com/Phoenix616/)
@@ -36,6 +38,17 @@ public class SearchSubCommand extends SubCommand {
         EntitySearch search = new EntitySearch(getPlugin(), sender);
         if(args.length > 0) {
             for(String arg : args) {
+                if ("--regions".equalsIgnoreCase(arg)) {
+                    Plugin plugin = Bukkit.getPluginManager().getPlugin("WorldGuard");
+                    if (plugin != null && plugin.isEnabled() && plugin.getDescription().getVersion().startsWith("7"))
+                        search.setWorldGuardRegion(true);
+                    else {
+                        sender.sendMessage(ChatColor.RED + "Unable to start WorldGuard search. WorldGuard not enabled or outdated!");
+                        return true;
+                    }
+                    if (args.length == 1) search.setType(SearchType.MONSTER);
+                    continue;
+                }
                 if (arg.endsWith("s")) {
                     arg = arg.substring(0, arg.length() - 1);
                 }
