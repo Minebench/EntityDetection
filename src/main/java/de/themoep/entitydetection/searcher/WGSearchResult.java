@@ -47,8 +47,7 @@ public class WGSearchResult extends SearchResult<WGSearchResult.ProtectedRegionE
     }
 
     @Override
-    public void teleport(Player sender, SearchResultEntry<?> oldEntry, int i) {
-        SearchResultEntry<WGSearchResult.ProtectedRegionEntry> entry = (SearchResultEntry<WGSearchResult.ProtectedRegionEntry>) oldEntry;
+    public void teleport(Player sender, SearchResultEntry<WGSearchResult.ProtectedRegionEntry> entry, int i) {
         com.sk89q.worldedit.util.Location wgLocation = entry.getChunk().region.getFlag(Flags.TELE_LOC);
         try {
             Location loc = wgLocation != null ? BukkitAdapter.adapt(wgLocation) : null;

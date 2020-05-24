@@ -116,5 +116,5 @@ public abstract class SearchResult<T> {
         endTime = System.currentTimeMillis();
     }
 
-    public abstract void teleport(Player sender, SearchResultEntry<?> entry, int i);
+    public abstract void teleport(Player sender, SearchResultEntry<T> entry, int i);
 }

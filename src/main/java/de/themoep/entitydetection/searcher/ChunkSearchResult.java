@@ -37,8 +37,7 @@ public class ChunkSearchResult extends SearchResult<ChunkLocation> {
     }
 
     @Override
-    public void teleport(Player sender, SearchResultEntry<?> oldEntry, int i) {
-        SearchResultEntry<ChunkLocation> entry = (SearchResultEntry<ChunkLocation>)oldEntry;
+    public void teleport(Player sender, SearchResultEntry<ChunkLocation> entry, int i) {
         try {
             Chunk chunk = entry.getChunk().toBukkit(Bukkit.getServer());
 
