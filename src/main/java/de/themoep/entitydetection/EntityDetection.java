@@ -141,7 +141,7 @@ public class EntityDetection extends JavaPlugin {
                                     )
                             )
                             .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/detect tp " + (line + 1)))
-                            .append(entry.getChunk() + " ")
+                            .append(entry.getLocation() + " ")
                             .color(net.md_5.bungee.api.ChatColor.YELLOW)
                             .append(entry.getSize() + " ")
                             .color(net.md_5.bungee.api.ChatColor.RED);
@@ -175,7 +175,7 @@ public class EntityDetection extends JavaPlugin {
                 for(int line = start; line < start + 10 && line < chunkEntries.size(); line++) {
                     SearchResultEntry<?> chunkEntry = chunkEntries.get(line);
 
-                    String lineText = ChatColor.WHITE + " " + (line + 1) + ": " + ChatColor.YELLOW + chunkEntry.getChunk() + " " + ChatColor.RED + chunkEntry.getSize() + " ";
+                    String lineText = ChatColor.WHITE + " " + (line + 1) + ": " + ChatColor.YELLOW + chunkEntry.getLocation() + " " + ChatColor.RED + chunkEntry.getSize() + " ";
 
                     int entitiesListed = 0;
                     for(Entry<String, Integer> entityEntry : chunkEntry.getEntryCount()) {

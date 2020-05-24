@@ -45,7 +45,7 @@ public class SearchResultEntry<T> implements Comparable<SearchResultEntry<T>> {
         return size;
     }
 
-    public T getChunk() {
+    public T getLocation() {
         return location;
     }
 

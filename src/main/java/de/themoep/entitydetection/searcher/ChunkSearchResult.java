@@ -39,7 +39,7 @@ public class ChunkSearchResult extends SearchResult<ChunkLocation> {
     @Override
     public void teleport(Player sender, SearchResultEntry<ChunkLocation> entry, int i) {
         try {
-            Chunk chunk = entry.getChunk().toBukkit(Bukkit.getServer());
+            Chunk chunk = entry.getLocation().toBukkit(Bukkit.getServer());
 
             Location loc = null;
 
@@ -64,7 +64,7 @@ public class ChunkSearchResult extends SearchResult<ChunkLocation> {
             sender.teleport(loc, PlayerTeleportEvent.TeleportCause.PLUGIN);
             sender.sendMessage(
                     ChatColor.GREEN + "Teleported to entry " + ChatColor.WHITE + i + ": " +
-                            ChatColor.YELLOW + entry.getChunk() + " " + ChatColor.RED + entry.getSize() + " " +
+                            ChatColor.YELLOW + entry.getLocation() + " " + ChatColor.RED + entry.getSize() + " " +
                             ChatColor.GREEN + Utils.enumToHumanName(entry.getEntryCount().get(0).getKey()) + "[" +
                             ChatColor.WHITE + entry.getEntryCount().get(0).getValue() + ChatColor.GREEN + "]"
             );

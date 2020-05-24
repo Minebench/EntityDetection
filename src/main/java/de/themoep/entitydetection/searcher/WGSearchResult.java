@@ -15,6 +15,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
+import java.lang.ref.WeakReference;
 import java.util.Objects;
 
 public class WGSearchResult extends SearchResult<WGSearchResult.ProtectedRegionEntry> {
@@ -48,18 +49,23 @@ public class WGSearchResult extends SearchResult<WGSearchResult.ProtectedRegionE
 
     @Override
     public void teleport(Player sender, SearchResultEntry<WGSearchResult.ProtectedRegionEntry> entry, int i) {
-        com.sk89q.worldedit.util.Location wgLocation = entry.getChunk().region.getFlag(Flags.TELE_LOC);
+        com.sk89q.worldedit.util.Location wgLocation = entry.getLocation().region.getFlag(Flags.TELE_LOC);
         try {
+            World world = entry.getLocation().world.get();
+            if(world == null) {
+                sender.sendMessage(ChatColor.RED + "World " + ChatColor.WHITE + entry.getLocation().worldName + ChatColor.RED + " is not loaded anymore.");
+                return;
+            }
             Location loc = wgLocation != null ? BukkitAdapter.adapt(wgLocation) : null;
             if(loc == null) {
-                loc = BukkitAdapter.adapt(entry.getChunk().world, entry.getChunk().region.getMinimumPoint().add(
-                        entry.getChunk().region.getMaximumPoint().subtract(entry.getChunk().region.getMinimumPoint()).divide(2)));
+                loc = BukkitAdapter.adapt(world, entry.getLocation().region.getMinimumPoint().add(
+                        entry.getLocation().region.getMaximumPoint().subtract(entry.getLocation().region.getMinimumPoint()).divide(2)));
             }
 
             sender.teleport(loc, PlayerTeleportEvent.TeleportCause.PLUGIN);
             sender.sendMessage(
                     ChatColor.GREEN + "Teleported to entry " + ChatColor.WHITE + i + ": " +
-                            ChatColor.YELLOW + entry.getChunk().region.getId() + " " + ChatColor.RED + entry.getSize() + " " +
+                            ChatColor.YELLOW + entry.getLocation().region.getId() + " " + ChatColor.RED + entry.getSize() + " " +
                             ChatColor.GREEN + Utils.enumToHumanName(entry.getEntryCount().get(0).getKey()) + "[" +
                             ChatColor.WHITE + entry.getEntryCount().get(0).getValue() + ChatColor.GREEN + "]"
             );
@@ -69,17 +75,20 @@ public class WGSearchResult extends SearchResult<WGSearchResult.ProtectedRegionE
     }
 
     public static class ProtectedRegionEntry {
-        World world;
+        String worldName;
+        WeakReference<World> world;
         ProtectedRegion region;
 
         public ProtectedRegionEntry(World world, ProtectedRegion region) {
-            this.world = world;
+            this.worldName = world.getName();
+            this.world = new WeakReference<>(world);
             this.region = region;
         }
 
         @Override
         public String toString() {
-            return "w: " + world.getName() + ", r: " + region.getId();
+            World w = world.get();
+            return "w: " + worldName + (w == null ? " (unloaded)" : "") + ", r: " + region.getId();
         }
 
         @Override
