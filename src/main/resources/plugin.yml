@@ -3,6 +3,7 @@ main: de.themoep.entitydetection.EntityDetection
 version: '${minecraft.plugin.version}'
 api-version: 1.13
 description: '${project.description}'
+softdepend: ["WorldGuard"]
 authors: [Phoenix616]
 commands:
    entitydetection:

@@ -46,7 +46,10 @@ public class TpSubCommand extends SubCommand {
         if(args.length == 0) {
             return false;
         }
-        SearchResult lastResult = getPlugin().getResult(sender);
+        return teleport((Player)sender, args[0], getPlugin().getResult(sender));
+    }
+
+    private <T> boolean teleport(Player sender, String page, SearchResult<T> lastResult) {
         if(lastResult == null) {
             sender.sendMessage(ChatColor.RED + "You have to view a search result before teleporting to an entry! Use /detect search or /detect list [<type>]");
             return true;
@@ -54,53 +57,19 @@ public class TpSubCommand extends SubCommand {
 
         int i;
         try {
-            i = Integer.parseInt(args[0]);
+            i = Integer.parseInt(page);
         } catch(NumberFormatException e) {
-            sender.sendMessage(ChatColor.YELLOW + args[0] + ChatColor.RED + " is not a proper number input!");
+            sender.sendMessage(ChatColor.YELLOW + page + ChatColor.RED + " is not a proper number input!");
             return false;
         }
 
         if(i == 0 || lastResult.getSortedEntries().size() < i) {
-            sender.sendMessage(ChatColor.RED + "Result " + ChatColor.YELLOW + args[0] + ChatColor.RED + " is not in the list!");
+            sender.sendMessage(ChatColor.RED + "Result " + ChatColor.YELLOW + page + ChatColor.RED + " is not in the list!");
             return true;
         }
 
-        SearchResultEntry entry = lastResult.getSortedEntries().get(i - 1);
-
-        try {
-            Chunk chunk = entry.getChunk().toBukkit(getPlugin().getServer());
-
-            Location loc = null;
-
-            for(Entity e : chunk.getEntities()) {
-                if(e.getType().toString().equals(entry.getEntryCount().get(0).getKey())) {
-                    loc = e.getLocation();
-                    break;
-                }
-            }
-
-            for (BlockState b : chunk.getTileEntities()) {
-                if(b.getType().toString().equals(entry.getEntryCount().get(0).getKey())) {
-                    loc = b.getLocation().add(0, 1, 0);
-                    break;
-                }
-            }
-
-            if (loc == null) {
-                loc = chunk.getWorld().getHighestBlockAt(chunk.getX() * 16 + 8, chunk.getZ() * 16 + 8).getLocation().add(0, 2, 0);
-            }
-
-            ((Player) sender).teleport(loc, PlayerTeleportEvent.TeleportCause.PLUGIN);
-            sender.sendMessage(
-                    ChatColor.GREEN + "Teleported to entry " + ChatColor.WHITE + i + ": " +
-                            ChatColor.YELLOW + entry.getChunk() + " " + ChatColor.RED + entry.getSize() + " " +
-                            ChatColor.GREEN + Utils.enumToHumanName(entry.getEntryCount().get(0).getKey()) + "[" +
-                            ChatColor.WHITE + entry.getEntryCount().get(0).getValue() + ChatColor.GREEN + "]"
-            );
-
-        } catch(IllegalArgumentException e) {
-            sender.sendMessage(ChatColor.RED + e.getMessage());
-        }
+        SearchResultEntry<T> entry = lastResult.getSortedEntries().get(i - 1);
+        lastResult.teleport(sender, entry, i);
         return true;
     }
 }

@@ -46,6 +46,8 @@ public class EntitySearch extends BukkitRunnable {
     private List<Entity> entities = new ArrayList<Entity>();
     private List<BlockState> blockStates = new ArrayList<BlockState>();
 
+    private boolean isWorldGuardRegion = false;
+
     public EntitySearch(EntityDetection plugin, CommandSender sender) {
         this.plugin = plugin;
         owner = sender;
@@ -100,6 +102,13 @@ public class EntitySearch extends BukkitRunnable {
         return startTime;
     }
 
+    public boolean isWorldGuardRegion() {
+        return this.isWorldGuardRegion;
+    }
+
+    public void setWorldGuardRegion(boolean value) {
+        this.isWorldGuardRegion = value;
+    }
     /**
      * Get the duration since this search started
      * @return The duration in seconds
@@ -138,7 +147,9 @@ public class EntitySearch extends BukkitRunnable {
 
     public void run() {
         startTime = System.currentTimeMillis();
-        SearchResult result = new SearchResult(this);
+        SearchResult<?> result;
+        if(isWorldGuardRegion) result = new WGSearchResult(this);
+        else result = new ChunkSearchResult(this);
 
         for(Entity e : entities) {
             if(!running) {
@@ -159,7 +170,7 @@ public class EntitySearch extends BukkitRunnable {
         }
 
         result.sort();
-        plugin.addResult(result);;
+        plugin.addResult(result);
         plugin.send(owner, result);
         running = false;
     }
