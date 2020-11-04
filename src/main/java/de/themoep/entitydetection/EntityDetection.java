@@ -80,6 +80,7 @@ public class EntityDetection extends JavaPlugin {
             return false;
         }
         currentSearch.stop(stopper);
+        clearCurrentSearch();
         return true;
     }
 
@@ -90,6 +91,10 @@ public class EntityDetection extends JavaPlugin {
         } else {
             results.put(result.getType(), result);
         }
+    }
+
+    public void clearCurrentSearch() {
+        currentSearch = null;
     }
 
     public EntitySearch getCurrentSearch() {

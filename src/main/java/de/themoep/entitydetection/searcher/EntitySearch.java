@@ -173,5 +173,6 @@ public class EntitySearch extends BukkitRunnable {
         plugin.addResult(result);
         plugin.send(owner, result);
         running = false;
+        plugin.clearCurrentSearch();
     }
 }
