@@ -130,7 +130,7 @@ public class EntitySearch extends WrappedRunnable {
                 }
             }
         }
-        return runTaskAsynchronously(plugin);
+        return runTask(plugin);
     }
 
     public boolean isRunning() {
