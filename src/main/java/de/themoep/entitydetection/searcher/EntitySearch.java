@@ -1,6 +1,8 @@
 package de.themoep.entitydetection.searcher;
 
 import de.themoep.entitydetection.EntityDetection;
+import me.nahu.scheduler.wrapper.runnable.WrappedRunnable;
+import me.nahu.scheduler.wrapper.task.WrappedTask;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
@@ -9,8 +11,6 @@ import org.bukkit.block.BlockState;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,7 +34,7 @@ import java.util.Set;
  * You should have received a copy of the Mozilla Public License v2.0
  * along with this program. If not, see <http://mozilla.org/MPL/2.0/>.
  */
-public class EntitySearch extends BukkitRunnable {
+public class EntitySearch extends WrappedRunnable {
     private final EntityDetection plugin;
     private final CommandSender owner;
     private SearchType type = SearchType.CUSTOM;
@@ -117,7 +117,7 @@ public class EntitySearch extends BukkitRunnable {
         return (System.currentTimeMillis() - getStartTime()) / 1000;
     }
 
-    public BukkitTask start() {
+    public WrappedTask start() {
         if (searchedEntities.size() > 0) {
             for (World world : plugin.getServer().getWorlds()) {
                 entities.addAll(world.getEntities());
