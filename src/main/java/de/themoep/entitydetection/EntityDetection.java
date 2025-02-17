@@ -46,6 +46,8 @@ import java.util.Set;
  */
 public class EntityDetection extends FoliaWrappedJavaPlugin {
 
+    private static EntityDetection instance = null;
+
     private EntitySearch currentSearch;
 
     private Map<SearchType, SearchResult<?>> results = new HashMap<>();
@@ -54,7 +56,13 @@ public class EntityDetection extends FoliaWrappedJavaPlugin {
 
     private boolean serverIsSpigot = true;
 
+    public static EntityDetection getInstance() {
+        if (instance == null) throw new IllegalStateException("EntityDetection has not been initialized yet!");
+        return instance;
+    }
+
     public void onEnable() {
+        instance = this;
         try {
             Bukkit.class.getMethod("spigot");
         } catch (NoSuchMethodException noSpigot) {
