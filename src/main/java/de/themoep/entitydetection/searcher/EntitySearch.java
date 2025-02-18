@@ -1,6 +1,8 @@
 package de.themoep.entitydetection.searcher;
 
 import de.themoep.entitydetection.EntityDetection;
+import de.themoep.entitydetection.util.folia.FoliaScheduler;
+import de.themoep.entitydetection.util.folia.TaskWrapper;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
@@ -9,8 +11,6 @@ import org.bukkit.block.BlockState;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,7 +34,7 @@ import java.util.Set;
  * You should have received a copy of the Mozilla Public License v2.0
  * along with this program. If not, see <http://mozilla.org/MPL/2.0/>.
  */
-public class EntitySearch extends BukkitRunnable {
+public class EntitySearch implements Runnable {
     private final EntityDetection plugin;
     private final CommandSender owner;
     private SearchType type = SearchType.CUSTOM;
@@ -117,7 +117,7 @@ public class EntitySearch extends BukkitRunnable {
         return (System.currentTimeMillis() - getStartTime()) / 1000;
     }
 
-    public BukkitTask start() {
+    public TaskWrapper start() {
         if (searchedEntities.size() > 0) {
             for (World world : plugin.getServer().getWorlds()) {
                 entities.addAll(world.getEntities());
@@ -126,11 +126,18 @@ public class EntitySearch extends BukkitRunnable {
         if (searchedBlockStates.size() > 0 || searchedMaterial.size() > 0) {
             for (World world : plugin.getServer().getWorlds()) {
                 for (Chunk chunk : world.getLoadedChunks()) {
+                    if (FoliaScheduler.isFolia()) {
+                        FoliaScheduler.getRegionScheduler().run(plugin, chunk.getWorld(), chunk.getX(), chunk.getZ(),
+                                $ -> blockStates.addAll(Arrays.asList(chunk.getTileEntities())));
+                        continue;
+                    }
+
                     blockStates.addAll(Arrays.asList(chunk.getTileEntities()));
                 }
             }
         }
-        return runTaskAsynchronously(plugin);
+
+       return FoliaScheduler.getAsyncScheduler().runNow(plugin, $ -> this.run());
     }
 
     public boolean isRunning() {
@@ -139,7 +146,6 @@ public class EntitySearch extends BukkitRunnable {
 
     public void stop(String name) {
         running = false;
-        cancel();
         if(!owner.getName().equals(name)) {
             owner.sendMessage(ChatColor.YELLOW + name + ChatColor.RED + " stopped your " + getType() + " search after " + getDuration() + "s!");
         }

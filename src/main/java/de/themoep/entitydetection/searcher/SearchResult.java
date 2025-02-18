@@ -1,5 +1,7 @@
 package de.themoep.entitydetection.searcher;
 
+import de.themoep.entitydetection.EntityDetection;
+import de.themoep.entitydetection.util.folia.FoliaScheduler;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockState;
@@ -14,6 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Copyright 2016 Max Lee (https://github.com/Phoenix616/)
@@ -31,6 +34,8 @@ import java.util.Set;
  * along with this program. If not, see <http://mozilla.org/MPL/2.0/>.
  */
 public abstract class SearchResult<T> {
+    protected static final EntityDetection PLUGIN = EntityDetection.getInstance();
+
     private SearchType type;
     private Set<String> searched;
     private long startTime;
@@ -39,7 +44,8 @@ public abstract class SearchResult<T> {
     /**
      * Working search map, use resultEntryList after sorting this result!
      */
-    protected Map<T, SearchResultEntry<T>> resultEntryMap = new HashMap<>();
+    protected Map<T, SearchResultEntry<T>> resultEntryMap = FoliaScheduler.isFolia() ?
+            new ConcurrentHashMap<>() : new HashMap<>();
 
     /**
      * Sorted, highest entity count per chunks first, only propagated after running .sort()
@@ -65,13 +71,17 @@ public abstract class SearchResult<T> {
      * Add an entity to this result
      * @param entity The entity to add
      */
-    public abstract void addEntity(Entity entity);
+    public void addEntity(Entity entity) {
+        add(entity.getLocation(), entity.getType().toString());
+    }
 
     /**
      * Add a BlockState to this result
      * @param blockState The entity to add
      */
-    public abstract void addBlockState(BlockState blockState);
+    public void addBlockState(BlockState blockState) {
+        add(blockState.getLocation(), blockState.getType().toString());
+    }
 
     public abstract void add(Location location, String type);
 

@@ -2,6 +2,7 @@ name: ${project.name}
 main: de.themoep.entitydetection.EntityDetection
 version: '${minecraft.plugin.version}'
 api-version: 1.13
+folia-supported: true
 description: '${project.description}'
 softdepend: ["WorldGuard"]
 authors: [Phoenix616]

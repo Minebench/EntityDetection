@@ -9,6 +9,7 @@ import de.themoep.entitydetection.searcher.EntitySearch;
 import de.themoep.entitydetection.searcher.SearchResult;
 import de.themoep.entitydetection.searcher.SearchResultEntry;
 import de.themoep.entitydetection.searcher.SearchType;
+import de.themoep.entitydetection.util.folia.TaskWrapper;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -46,7 +47,10 @@ import java.util.Set;
  */
 public class EntityDetection extends JavaPlugin {
 
+    private static EntityDetection instance = null;
+
     private EntitySearch currentSearch;
+    private TaskWrapper currentSearchTask;
 
     private Map<SearchType, SearchResult<?>> results = new HashMap<>();
     private Map<String, SearchResult<?>> customResults = new HashMap<>();
@@ -54,7 +58,13 @@ public class EntityDetection extends JavaPlugin {
 
     private boolean serverIsSpigot = true;
 
+    public static EntityDetection getInstance() {
+        if (instance == null) throw new IllegalStateException("EntityDetection has not been initialized yet!");
+        return instance;
+    }
+
     public void onEnable() {
+        instance = this;
         try {
             Bukkit.class.getMethod("spigot");
         } catch (NoSuchMethodException noSpigot) {
@@ -71,14 +81,19 @@ public class EntityDetection extends JavaPlugin {
         if(currentSearch != null && currentSearch.isRunning()) {
             return false;
         }
+
         currentSearch = search;
-        return search.start() != null;
+        currentSearchTask = search.start();
+
+        return currentSearchTask != null;
     }
 
     public boolean stopSearch(String stopper) {
-        if(currentSearch == null || !currentSearch.isRunning()) {
+        if(currentSearch == null || !currentSearch.isRunning() || currentSearchTask.isCancelled()) {
             return false;
         }
+
+        currentSearchTask.cancel();
         currentSearch.stop(stopper);
         clearCurrentSearch();
         return true;
