@@ -9,7 +9,7 @@ import de.themoep.entitydetection.searcher.EntitySearch;
 import de.themoep.entitydetection.searcher.SearchResult;
 import de.themoep.entitydetection.searcher.SearchResultEntry;
 import de.themoep.entitydetection.searcher.SearchType;
-import me.nahu.scheduler.wrapper.FoliaWrappedJavaPlugin;
+import de.themoep.entitydetection.util.folia.TaskWrapper;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -18,6 +18,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -44,11 +45,12 @@ import java.util.Set;
  * You should have received a copy of the Mozilla Public License v2.0
  * along with this program. If not, see <http://mozilla.org/MPL/2.0/>.
  */
-public class EntityDetection extends FoliaWrappedJavaPlugin {
+public class EntityDetection extends JavaPlugin {
 
     private static EntityDetection instance = null;
 
     private EntitySearch currentSearch;
+    private TaskWrapper currentSearchTask;
 
     private Map<SearchType, SearchResult<?>> results = new HashMap<>();
     private Map<String, SearchResult<?>> customResults = new HashMap<>();
@@ -79,14 +81,19 @@ public class EntityDetection extends FoliaWrappedJavaPlugin {
         if(currentSearch != null && currentSearch.isRunning()) {
             return false;
         }
+
         currentSearch = search;
-        return search.start() != null;
+        currentSearchTask = search.start();
+
+        return currentSearchTask != null;
     }
 
     public boolean stopSearch(String stopper) {
-        if(currentSearch == null || !currentSearch.isRunning()) {
+        if(currentSearch == null || !currentSearch.isRunning() || currentSearchTask.isCancelled()) {
             return false;
         }
+
+        currentSearchTask.cancel();
         currentSearch.stop(stopper);
         clearCurrentSearch();
         return true;

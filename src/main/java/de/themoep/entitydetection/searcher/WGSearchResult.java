@@ -7,6 +7,7 @@ import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
 import de.themoep.entitydetection.Utils;
+import de.themoep.entitydetection.util.folia.FoliaScheduler;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -24,27 +25,26 @@ public class WGSearchResult extends SearchResult<WGSearchResult.ProtectedRegionE
     }
 
     @Override
-    public void addEntity(Entity entity) {
-        add(entity.getLocation(), entity.getType().toString());
-    }
-
-    @Override
-    public void addBlockState(BlockState blockState) {
-        add(blockState.getLocation(), blockState.getType().toString());
-    }
-
-    @Override
     public void add(Location location, String type) {
-        RegionQuery query = WorldGuard.getInstance().getPlatform().getRegionContainer().createQuery();
-        ApplicableRegionSet applicableRegions = query.getApplicableRegions(BukkitAdapter.adapt(location));
+        final Runnable runnable = () -> {
+            RegionQuery query = WorldGuard.getInstance().getPlatform().getRegionContainer().createQuery();
+            ApplicableRegionSet applicableRegions = query.getApplicableRegions(BukkitAdapter.adapt(location));
 
-        applicableRegions.forEach(region -> {
-            ProtectedRegionEntry protectedRegionEntry = new ProtectedRegionEntry(location.getWorld(), region);
-            if(!resultEntryMap.containsKey(protectedRegionEntry)) {
-                resultEntryMap.put(protectedRegionEntry, new SearchResultEntry<>(protectedRegionEntry));
-            }
-            resultEntryMap.get(protectedRegionEntry).increment(type);
-        });
+            applicableRegions.forEach(region -> {
+                ProtectedRegionEntry protectedRegionEntry = new ProtectedRegionEntry(location.getWorld(), region);
+                if (!resultEntryMap.containsKey(protectedRegionEntry)) {
+                    resultEntryMap.put(protectedRegionEntry, new SearchResultEntry<>(protectedRegionEntry));
+                }
+                resultEntryMap.get(protectedRegionEntry).increment(type);
+            });
+        };
+
+        if (FoliaScheduler.isFolia()) {
+            FoliaScheduler.getRegionScheduler().run(PLUGIN, location, $ -> runnable.run());
+            return;
+        }
+
+        runnable.run();
     }
 
     @Override
