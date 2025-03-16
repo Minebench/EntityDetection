@@ -26,9 +26,8 @@ public abstract class SubCommand {
     private final String path;
     private final Permission permission;
     private final String arguments;
-    private final String help;
 
-    public SubCommand(EntityDetection plugin, String command, String path, String arguments, String help) {
+    public SubCommand(EntityDetection plugin, String command, String path, String arguments) {
         this.plugin = plugin;
         this.command = command;
         this.path = path;
@@ -38,7 +37,6 @@ public abstract class SubCommand {
                 PermissionDefault.OP
         );
         this.arguments = arguments;
-        this.help = help;
     }
 
     public abstract boolean execute(CommandSender sender, String[] args);
@@ -53,14 +51,6 @@ public abstract class SubCommand {
 
     public Permission getPermission() {
         return permission;
-    }
-
-    /**
-     * Get the help text
-     * @return The help text
-     */
-    public String getHelp() {
-        return help;
     }
 
     public EntityDetection getPlugin() {

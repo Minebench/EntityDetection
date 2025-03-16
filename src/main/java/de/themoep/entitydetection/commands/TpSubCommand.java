@@ -31,8 +31,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 public class TpSubCommand extends SubCommand {
     public TpSubCommand(EntityDetection plugin) {
         super(plugin, plugin.getName().toLowerCase(), "tp",
-                "<#result>",
-                "Teleports you to the chunk of the result entry."
+                "<#result>"
         );
     }
 
