@@ -23,8 +23,7 @@ import org.bukkit.command.CommandSender;
 public class StopSubCommand extends SubCommand {
     public StopSubCommand(EntityDetection plugin) {
         super(plugin, plugin.getName().toLowerCase(), "stop",
-                "",
-                "Stop the currently running search."
+                ""
         );
     }
 

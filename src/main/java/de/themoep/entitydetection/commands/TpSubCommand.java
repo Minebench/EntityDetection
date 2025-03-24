@@ -1,17 +1,11 @@
 package de.themoep.entitydetection.commands;
 
 import de.themoep.entitydetection.EntityDetection;
-import de.themoep.entitydetection.Utils;
 import de.themoep.entitydetection.searcher.SearchResult;
 import de.themoep.entitydetection.searcher.SearchResultEntry;
 import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.block.BlockState;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerTeleportEvent;
 
 /**
  * Copyright 2016 Max Lee (https://github.com/Phoenix616/)
@@ -31,8 +25,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 public class TpSubCommand extends SubCommand {
     public TpSubCommand(EntityDetection plugin) {
         super(plugin, plugin.getName().toLowerCase(), "tp",
-                "<#result>",
-                "Teleports you to the chunk of the result entry."
+                "<#result>"
         );
     }
 

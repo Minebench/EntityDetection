@@ -1,18 +1,12 @@
 package de.themoep.entitydetection.commands;
 
 import de.themoep.entitydetection.EntityDetection;
-import de.themoep.entitydetection.Utils;
 import de.themoep.entitydetection.searcher.SearchResult;
-import de.themoep.entitydetection.searcher.SearchResultEntry;
 import de.themoep.entitydetection.searcher.SearchType;
 import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerTeleportEvent;
 
 /**
  * Copyright 2016 Max Lee (https://github.com/Phoenix616/)
@@ -32,8 +26,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 public class ListSubCommand extends SubCommand {
     public ListSubCommand(EntityDetection plugin) {
         super(plugin, plugin.getName().toLowerCase(), "list",
-                "[<page> [monster|animal|misc|block|tiles|all| <type>]]",
-                "Lists the last result. Specify a type to get a specific one."
+                "[<page> [monster|passive|misc|block|tile|all|<type>]]"
         );
     }
 

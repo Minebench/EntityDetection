@@ -1,0 +1,22 @@
+error:
+  no-permission: "&red&To use [%action%](yellow) you require the permission [%permission%](yellow)."
+help:
+  list: "Lists the last result. Specify a type to get a specific one."
+  search: "Search for groups of entities. Default is monster."
+  stop: "Stop the currently running search."
+  tp: "Teleports you to the chunk of the result entry."
+  sub-command:
+    usage: |-
+      &yellow&%usage%
+      &white&%description%
+    none: "&red&No sub commands for command %command% found."
+  usage: "Usage: &yellow&%usage%"
+result:
+  head: "[%type% search](green hover=%searchedtypes%) from %timestamp%:"
+  searched-types:
+    head: "&yellow&Entity Types:"
+    entry: " &dark_purple&%type%"
+  time-format: "yyyy-MM-dd HH:mm:ss"
+  entry: "[ %line%: &yellow&%location% &red&%size%%entitycounts%](/detect tp %line% hover=&blue&Click to teleport to %line%)"
+  entity-count: " &green&%type% [&white&%count%&green&]"
+  no-entries: " &red&No entities of that type found!"
