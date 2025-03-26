@@ -7,7 +7,7 @@
     <groupId>de.themoep</groupId>
     <artifactId>entitydetection</artifactId>
     <version>1.3.0-SNAPSHOT</version>
-    <description>Bukkit plugin to find groups of mobs, animals or other (tile) entities.</description>
+    <description>Paper plugin to find groups of mobs, animals or other (tile) entities.</description>
     <name>EntityDetection</name>
 
     <properties>
@@ -101,6 +101,22 @@
             </resource>
         </resources>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.4.2</version>
+                <configuration>
+                    <forceCreation>true</forceCreation>
+                    <archive>
+                        <manifest>
+                            <addDefaultEntries>true</addDefaultEntries>
+                        </manifest>
+                        <manifestEntries>
+                            <paperweight-mappings-namespace>mojang</paperweight-mappings-namespace>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
