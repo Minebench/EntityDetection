@@ -2,11 +2,9 @@ package de.themoep.entitydetection.searcher;
 
 import com.tcoded.folialib.impl.PlatformScheduler;
 import de.themoep.entitydetection.ChunkLocation;
-import de.themoep.entitydetection.EntityDetection;
 import de.themoep.entitydetection.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.BlockState;
@@ -16,10 +14,11 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 
 public class ChunkSearchResult extends SearchResult<ChunkLocation> {
 
-    private final PlatformScheduler scheduler = EntityDetection.scheduler();
+    private final PlatformScheduler scheduler;
 
     public ChunkSearchResult(EntitySearch search) {
         super(search);
+        this.scheduler = search.getScheduler();
     }
 
     @Override
@@ -57,9 +56,7 @@ public class ChunkSearchResult extends SearchResult<ChunkLocation> {
             int anchorZ = (cz << 4) + 8;
             Location location = new Location(targetWorld, anchorX, 64, anchorZ);
 
-            scheduler.runAtLocation(location, task -> {
-                Chunk chunk = targetWorld.getChunkAt(cx, cz);
-
+            targetWorld.getChunkAtAsync(cx, cz, true, chunk -> scheduler.runAtLocation(location, task -> {
                 Location loc = null;
 
                 for(Entity e : chunk.getEntities()) {
@@ -77,15 +74,11 @@ public class ChunkSearchResult extends SearchResult<ChunkLocation> {
                 }
 
                 if (loc == null) {
-                    loc = chunk.getWorld().getHighestBlockAt((cx << 4) + 8, (cz << 4) + 8).getLocation().add(0, 2, 0);
+                    loc = chunk.getWorld().getHighestBlockAt(anchorX, anchorZ).getLocation().add(0, 2, 0);
                 }
 
                 Location finalLoc = loc;
-                if (hasTeleportAsync()) {
-                    scheduler.runAtEntity(sender, nextTask -> sender.teleportAsync(finalLoc, PlayerTeleportEvent.TeleportCause.PLUGIN));
-                } else {
-                    sender.teleport(finalLoc, PlayerTeleportEvent.TeleportCause.PLUGIN);
-                }
+                scheduler.teleportAsync(sender, finalLoc, PlayerTeleportEvent.TeleportCause.PLUGIN);
 
                 sender.sendMessage(
                         ChatColor.GREEN + "Teleported to entry " + ChatColor.WHITE + i + ": " +
@@ -93,19 +86,10 @@ public class ChunkSearchResult extends SearchResult<ChunkLocation> {
                                 ChatColor.GREEN + Utils.enumToHumanName(entry.getEntryCount().get(0).getKey()) + "[" +
                                 ChatColor.WHITE + entry.getEntryCount().get(0).getValue() + ChatColor.GREEN + "]"
                 );
-            });
+            }));
 
         } catch(IllegalArgumentException e) {
             sender.sendMessage(ChatColor.RED + e.getMessage());
-        }
-    }
-
-    private static boolean hasTeleportAsync() {
-        try {
-            Player.class.getMethod("teleportAsync", Location.class, PlayerTeleportEvent.TeleportCause.class);
-            return true;
-        } catch (NoSuchMethodException ignored) {
-            return false;
         }
     }
 }

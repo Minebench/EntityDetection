@@ -43,7 +43,7 @@ import java.util.Set;
  * along with this program. If not, see <http://mozilla.org/MPL/2.0/>.
  */
 public class EntityDetection extends JavaPlugin {
-    private static PlatformScheduler scheduler;
+    private PlatformScheduler scheduler;
 
     private LanguageManager lang;
 
@@ -53,7 +53,7 @@ public class EntityDetection extends JavaPlugin {
     private Map<String, SearchResult<?>> customResults = new HashMap<>();
     private Map<String, SearchResult<?>> lastResultViewed = new HashMap<>();
 
-    public static PlatformScheduler scheduler() {
+    public PlatformScheduler getScheduler() {
         return scheduler;
     }
 

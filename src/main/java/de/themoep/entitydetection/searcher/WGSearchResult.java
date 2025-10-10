@@ -7,7 +7,6 @@ import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
 import com.tcoded.folialib.impl.PlatformScheduler;
-import de.themoep.entitydetection.EntityDetection;
 import de.themoep.entitydetection.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -21,10 +20,11 @@ import java.lang.ref.WeakReference;
 import java.util.Objects;
 
 public class WGSearchResult extends SearchResult<WGSearchResult.ProtectedRegionEntry> {
-    private final PlatformScheduler scheduler = EntityDetection.scheduler();
+    private final PlatformScheduler scheduler;
 
     public WGSearchResult(EntitySearch search) {
         super(search);
+        this.scheduler = search.getScheduler();
     }
 
     @Override
@@ -67,11 +67,7 @@ public class WGSearchResult extends SearchResult<WGSearchResult.ProtectedRegionE
             }
 
             Location finalLoc = loc;
-            if (hasTeleportAsync()) {
-                scheduler.runAtEntity(sender, task -> sender.teleportAsync(finalLoc, PlayerTeleportEvent.TeleportCause.PLUGIN));
-            } else {
-                sender.teleport(finalLoc, PlayerTeleportEvent.TeleportCause.PLUGIN);
-            }
+            scheduler.teleportAsync(sender, finalLoc, PlayerTeleportEvent.TeleportCause.PLUGIN);
 
             sender.sendMessage(
                     ChatColor.GREEN + "Teleported to entry " + ChatColor.WHITE + i + ": " +
@@ -81,15 +77,6 @@ public class WGSearchResult extends SearchResult<WGSearchResult.ProtectedRegionE
             );
         } catch(IllegalArgumentException e) {
             sender.sendMessage(ChatColor.RED + e.getMessage());
-        }
-    }
-
-    private static boolean hasTeleportAsync() {
-        try {
-            Player.class.getMethod("teleportAsync", Location.class, PlayerTeleportEvent.TeleportCause.class);
-            return true;
-        } catch (NoSuchMethodException ignored) {
-            return false;
         }
     }
 
