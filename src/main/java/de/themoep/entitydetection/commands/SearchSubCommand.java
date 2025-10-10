@@ -34,7 +34,7 @@ public class SearchSubCommand extends SubCommand {
 
     @Override
     public boolean execute(CommandSender sender, String[] args) {
-        EntitySearch search = new EntitySearch(getPlugin(), sender, getPlugin().getScheduler());
+        EntitySearch search = new EntitySearch(getPlugin(), sender);
         if(args.length > 0) {
             for(String arg : args) {
                 if ("--regions".equalsIgnoreCase(arg)) {

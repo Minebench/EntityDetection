@@ -51,9 +51,9 @@ public class EntitySearch implements Runnable {
     private boolean isWorldGuardRegion = false;
     private final AtomicInteger pending = new AtomicInteger(0);
 
-    public EntitySearch(EntityDetection plugin, CommandSender sender, PlatformScheduler scheduler) {
+    public EntitySearch(EntityDetection plugin, CommandSender sender) {
         this.plugin = plugin;
-        this.scheduler = scheduler;
+        this.scheduler = plugin.getScheduler();
         owner = sender;
     }
 
