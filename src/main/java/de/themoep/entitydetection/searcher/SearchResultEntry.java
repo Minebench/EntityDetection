@@ -24,8 +24,8 @@ import java.util.Map;
  */
 public class SearchResultEntry<T> implements Comparable<SearchResultEntry<T>> {
     private T location;
-    private Map<String, Integer> entryCount = new HashMap<String, Integer>();
-    private List<Map.Entry<String, Integer>> finalList = new ArrayList<Map.Entry<String, Integer>>();
+    private Map<String, Integer> entryCount = new HashMap<>();
+    private List<Map.Entry<String, Integer>> finalList = new ArrayList<>();
     private int size = 0;
 
     SearchResultEntry(T location) {

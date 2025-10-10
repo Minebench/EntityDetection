@@ -48,7 +48,7 @@ public abstract class SearchResult<T> {
 
     public SearchResult(EntitySearch search) {
         type = search.getType();
-        searched = new HashSet<String>();
+        searched = new HashSet<>();
         for (EntityType e : search.getSearchedEntities()) {
             searched.add(e.toString());
         }
@@ -111,7 +111,7 @@ public abstract class SearchResult<T> {
             chunkEntry.sort();
         }
         resultEntryList = new ArrayList<>(resultEntryMap.values());
-        Collections.sort(resultEntryList, Collections.reverseOrder());
+        resultEntryList.sort(Collections.reverseOrder());
 
         endTime = System.currentTimeMillis();
     }

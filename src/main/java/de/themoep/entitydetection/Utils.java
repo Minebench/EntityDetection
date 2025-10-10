@@ -27,7 +27,7 @@ public class Utils {
     }
 
     /**
-     * Converts an uppercase enum to a human readable string
+     * Converts an uppercase enum to a human-readable string
      * @param convert The Enum to convert
      * @return The converted name; capitalizes each word and replaces underscores with spaces
      */
@@ -36,7 +36,7 @@ public class Utils {
     }
 
     /**
-     * Converts an uppercase enum to a human readable string
+     * Converts an uppercase enum to a human-readable string
      * @param convert The name of the Enum to convert
      * @return The converted name; capitalizes each word and replaces underscores with spaces
      */

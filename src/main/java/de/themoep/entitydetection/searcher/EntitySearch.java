@@ -1,5 +1,7 @@
 package de.themoep.entitydetection.searcher;
 
+import com.tcoded.folialib.impl.PlatformScheduler;
+import com.tcoded.folialib.wrapper.task.WrappedTask;
 import de.themoep.entitydetection.EntityDetection;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Chunk;
@@ -9,8 +11,6 @@ import org.bukkit.block.BlockState;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Copyright 2016 Max Lee (https://github.com/Phoenix616/)
@@ -34,22 +35,25 @@ import java.util.Set;
  * You should have received a copy of the Mozilla Public License v2.0
  * along with this program. If not, see <http://mozilla.org/MPL/2.0/>.
  */
-public class EntitySearch extends BukkitRunnable {
+public class EntitySearch implements Runnable {
     private final EntityDetection plugin;
+    private final PlatformScheduler scheduler;
     private final CommandSender owner;
     private SearchType type = SearchType.CUSTOM;
-    private Set<EntityType> searchedEntities = new HashSet<EntityType>();
-    private Set<Class<?>> searchedBlockStates = new HashSet<Class<?>>();
-    private Set<Material> searchedMaterial = new HashSet<Material>();
+    private Set<EntityType> searchedEntities = new HashSet<>();
+    private Set<Class<?>> searchedBlockStates = new HashSet<>();
+    private Set<Material> searchedMaterial = new HashSet<>();
     private long startTime;
     private boolean running = true;
-    private List<Entity> entities = new ArrayList<Entity>();
-    private List<BlockState> blockStates = new ArrayList<BlockState>();
+    private List<Entity> entities = new ArrayList<>();
+    private List<BlockState> blockStates = new ArrayList<>();
 
     private boolean isWorldGuardRegion = false;
+    private final AtomicInteger pending = new AtomicInteger(0);
 
     public EntitySearch(EntityDetection plugin, CommandSender sender) {
         this.plugin = plugin;
+        this.scheduler = EntityDetection.scheduler();
         owner = sender;
     }
 
@@ -117,20 +121,44 @@ public class EntitySearch extends BukkitRunnable {
         return (System.currentTimeMillis() - getStartTime()) / 1000;
     }
 
-    public BukkitTask start() {
+    public WrappedTask start() {
+        int scheduled = 0;
         if (searchedEntities.size() > 0) {
             for (World world : plugin.getServer().getWorlds()) {
-                entities.addAll(world.getEntities());
+                pending.incrementAndGet();
+                scheduled++;
+                scheduler.runAtLocation(world.getSpawnLocation(), task -> {
+                    try {
+                        entities.addAll(world.getEntities());
+                    } finally {
+                        if (pending.decrementAndGet() == 0) {
+                            scheduler.runLaterAsync(this, 1L);
+                        }
+                    }
+                });
             }
         }
         if (searchedBlockStates.size() > 0 || searchedMaterial.size() > 0) {
             for (World world : plugin.getServer().getWorlds()) {
                 for (Chunk chunk : world.getLoadedChunks()) {
-                    blockStates.addAll(Arrays.asList(chunk.getTileEntities()));
+                    pending.incrementAndGet();
+                    scheduled++;
+                    scheduler.runAtLocation(chunk.getBlock(0, 0, 0).getLocation(), task -> {
+                        try {
+                            blockStates.addAll(Arrays.asList(chunk.getTileEntities()));
+                        } finally {
+                            if (pending.decrementAndGet() == 0) {
+                                scheduler.runLaterAsync(this, 1L);
+                            }
+                        }
+                    });
                 }
             }
         }
-        return runTaskAsynchronously(plugin);
+        if (scheduled == 0) {
+            return scheduler.runLaterAsync(this, 1L);
+        }
+        return null;
     }
 
     public boolean isRunning() {
@@ -139,7 +167,6 @@ public class EntitySearch extends BukkitRunnable {
 
     public void stop(String name) {
         running = false;
-        cancel();
         if(!owner.getName().equals(name)) {
             owner.sendMessage(ChatColor.YELLOW + name + ChatColor.RED + " stopped your " + getType() + " search after " + getDuration() + "s!");
         }

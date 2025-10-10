@@ -1,5 +1,7 @@
 package de.themoep.entitydetection;
 
+import com.tcoded.folialib.FoliaLib;
+import com.tcoded.folialib.impl.PlatformScheduler;
 import de.themoep.entitydetection.commands.ListSubCommand;
 import de.themoep.entitydetection.commands.PluginCommandExecutor;
 import de.themoep.entitydetection.commands.SearchSubCommand;
@@ -41,6 +43,8 @@ import java.util.Set;
  * along with this program. If not, see <http://mozilla.org/MPL/2.0/>.
  */
 public class EntityDetection extends JavaPlugin {
+    private static PlatformScheduler scheduler;
+
     private LanguageManager lang;
 
     private EntitySearch currentSearch;
@@ -49,7 +53,13 @@ public class EntityDetection extends JavaPlugin {
     private Map<String, SearchResult<?>> customResults = new HashMap<>();
     private Map<String, SearchResult<?>> lastResultViewed = new HashMap<>();
 
+    public static PlatformScheduler scheduler() {
+        return scheduler;
+    }
+
     public void onEnable() {
+        FoliaLib foliaLib = new FoliaLib(this);
+        scheduler = foliaLib.getScheduler();
         lang = new LanguageManager(this, System.getProperty("de.themoep.entitydetection.default-language", "en"));
         PluginCommandExecutor cmdEx = new PluginCommandExecutor(this);
         cmdEx.register(new SearchSubCommand(this));
@@ -71,7 +81,8 @@ public class EntityDetection extends JavaPlugin {
             return false;
         }
         currentSearch = search;
-        return search.start() != null;
+        search.start();
+        return true;
     }
 
     public boolean stopSearch(String stopper) {
@@ -103,7 +114,6 @@ public class EntityDetection extends JavaPlugin {
     public void send(CommandSender sender, SearchResult<?> result) {
         send(sender, result, 0);
     }
-
 
     public void send(CommandSender sender, SearchResult<?> result, int page) {
         lastResultViewed.put(sender.getName(), result);

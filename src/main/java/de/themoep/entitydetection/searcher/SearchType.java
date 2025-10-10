@@ -95,10 +95,10 @@ public enum SearchType {
 
     SearchType(String[] aliases, EntityType[] eTypes, Class[] classes) {
         this.aliases = aliases;
-        Set<EntityType> typeSet = new HashSet<EntityType>();
+        Set<EntityType> typeSet = new HashSet<>();
         Collections.addAll(typeSet, eTypes);
 
-        List<Class> classList = new LinkedList<Class>(Arrays.asList(classes));
+        List<Class> classList = new LinkedList<>(Arrays.asList(classes));
 
         if(classes.length > 0) {
             for(EntityType et : EntityType.values()) {

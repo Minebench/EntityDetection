@@ -6,6 +6,8 @@ import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
+import com.tcoded.folialib.impl.PlatformScheduler;
+import de.themoep.entitydetection.EntityDetection;
 import de.themoep.entitydetection.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -19,6 +21,8 @@ import java.lang.ref.WeakReference;
 import java.util.Objects;
 
 public class WGSearchResult extends SearchResult<WGSearchResult.ProtectedRegionEntry> {
+    private final PlatformScheduler scheduler = EntityDetection.scheduler();
+
     public WGSearchResult(EntitySearch search) {
         super(search);
     }
@@ -62,7 +66,13 @@ public class WGSearchResult extends SearchResult<WGSearchResult.ProtectedRegionE
                         entry.getLocation().region.getMaximumPoint().subtract(entry.getLocation().region.getMinimumPoint()).divide(2)));
             }
 
-            sender.teleport(loc, PlayerTeleportEvent.TeleportCause.PLUGIN);
+            Location finalLoc = loc;
+            if (hasTeleportAsync()) {
+                scheduler.runAtEntity(sender, task -> sender.teleportAsync(finalLoc, PlayerTeleportEvent.TeleportCause.PLUGIN));
+            } else {
+                sender.teleport(finalLoc, PlayerTeleportEvent.TeleportCause.PLUGIN);
+            }
+
             sender.sendMessage(
                     ChatColor.GREEN + "Teleported to entry " + ChatColor.WHITE + i + ": " +
                             ChatColor.YELLOW + entry.getLocation().region.getId() + " " + ChatColor.RED + entry.getSize() + " " +
@@ -71,6 +81,15 @@ public class WGSearchResult extends SearchResult<WGSearchResult.ProtectedRegionE
             );
         } catch(IllegalArgumentException e) {
             sender.sendMessage(ChatColor.RED + e.getMessage());
+        }
+    }
+
+    private static boolean hasTeleportAsync() {
+        try {
+            Player.class.getMethod("teleportAsync", Location.class, PlayerTeleportEvent.TeleportCause.class);
+            return true;
+        } catch (NoSuchMethodException ignored) {
+            return false;
         }
     }
 
