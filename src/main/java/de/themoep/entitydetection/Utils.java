@@ -42,11 +42,11 @@ public class Utils {
      */
     public static String enumToHumanName(String convert) {
         String[] parts = convert.split("_");
-        if(parts.length == 0) {
+        if (parts.length == 0) {
             return "";
         }
         String human = capitalize(parts[0]);
-        for(int i = 1; i < parts.length; i++) {
+        for (int i = 1; i < parts.length; i++) {
             human += " " + capitalize(parts[i]);
         }
         return human;

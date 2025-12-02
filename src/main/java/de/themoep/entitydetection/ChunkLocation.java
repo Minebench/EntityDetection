@@ -49,7 +49,7 @@ public class ChunkLocation {
 
     public Chunk toBukkit(Server server) {
         World world = server.getWorld(getWorld());
-        if(world == null) {
+        if (world == null) {
             throw new IllegalArgumentException("No world with the name " + getWorld() + " found on the server for this chunk entry?");
         }
         return world.getChunkAt(x, z);
@@ -61,11 +61,11 @@ public class ChunkLocation {
 
     @Override
     public boolean equals(Object o) {
-        if(!(o instanceof ChunkLocation)) {
+        if (!(o instanceof ChunkLocation)) {
             return false;
         }
 
-        if(o == this) {
+        if (o == this) {
             return true;
         }
 

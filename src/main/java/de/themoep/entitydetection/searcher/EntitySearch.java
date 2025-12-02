@@ -69,7 +69,7 @@ public class EntitySearch implements Consumer<WrappedTask> {
     }
 
     public void setType(SearchType type) {
-        if(getSearchedEntities().size() == 0 && getSearchedBlockStates().size() == 0 && getSearchedMaterial().size() == 0) {
+        if (getSearchedEntities().size() == 0 && getSearchedBlockStates().size() == 0 && getSearchedMaterial().size() == 0) {
             this.type = type;
         } else {
             this.type = SearchType.CUSTOM;
@@ -183,7 +183,7 @@ public class EntitySearch implements Consumer<WrappedTask> {
 
     public void stop(String name) {
         running = false;
-        if(!owner.getName().equals(name)) {
+        if (!owner.getName().equals(name)) {
             owner.sendMessage(ChatColor.YELLOW + name + ChatColor.RED + " stopped your " + getType() + " search after " + getDuration() + "s!");
         }
     }

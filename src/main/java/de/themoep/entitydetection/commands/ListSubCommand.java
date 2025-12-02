@@ -36,29 +36,27 @@ public class ListSubCommand extends SubCommand {
         int page = 1;
         String lastName = sender.getName();
         String resultType = "";
-        if(args.length > 0) {
+        if (args.length > 0) {
             try {
                 page = Integer.parseInt(args[0]);
-            } catch(NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 sender.sendMessage(ChatColor.YELLOW + args[0] + ChatColor.RED + " is not a proper number input!");
                 return false;
             }
-            if(args.length > 1) {
+            if (args.length > 1) {
                 lastName = args[1];
 
                 String arg = args[1];
 
-                if(arg.endsWith("s")) {
+                if (arg.endsWith("s")) {
                     arg = arg.substring(0, arg.length() - 1);
                 }
 
                 boolean found = false;
-                if (!found) {
-                    try {
-                        result = getPlugin().getResult(EntityType.valueOf(arg.toUpperCase()).toString());
-                        found = true;
-                    } catch (IllegalArgumentException ignored) {}
-                }
+                try {
+                    result = getPlugin().getResult(EntityType.valueOf(arg.toUpperCase()).toString());
+                    found = true;
+                } catch (IllegalArgumentException ignored) {}
                 if (!found) {
                     try {
                         result = getPlugin().getResult(Class.forName("org.bukkit.block." + arg, false, getPlugin().getServer().getClass().getClassLoader()).getSimpleName()); //TODO: This is case sensitive :(
@@ -75,7 +73,7 @@ public class ListSubCommand extends SubCommand {
                     try {
                         result = getPlugin().getResult(SearchType.getByAlias(arg.toUpperCase()));
                         found = true;
-                    } catch(IllegalArgumentException ignored) {}
+                    } catch (IllegalArgumentException ignored) {}
                 }
                 if (!found) {
                     try {
@@ -91,12 +89,12 @@ public class ListSubCommand extends SubCommand {
             }
         }
 
-        if(result == null) {
+        if (result == null) {
             sender.sendMessage(ChatColor.RED + "No previous result for " + lastName + " found!");
             return true;
         }
 
-        if(page == 0 || result.getSortedEntries().size() < (page - 1) * 10) {
+        if (page == 0 || result.getSortedEntries().size() < (page - 1) * 10) {
             sender.sendMessage(ChatColor.RED + "There is no page " + page + " in the last " + lastName + " result!");
             return true;
         }

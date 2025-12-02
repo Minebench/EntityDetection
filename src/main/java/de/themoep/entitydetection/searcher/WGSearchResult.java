@@ -71,7 +71,7 @@ public class WGSearchResult extends SearchResult<WGSearchResult.ProtectedRegionE
                             ChatColor.GREEN + Utils.enumToHumanName(entry.getEntryCount().get(0).getKey()) + "[" +
                             ChatColor.WHITE + entry.getEntryCount().get(0).getValue() + ChatColor.GREEN + "]"
             );
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             sender.sendMessage(ChatColor.RED + e.getMessage());
         }
     }

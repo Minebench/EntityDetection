@@ -19,16 +19,31 @@ public class ChunkSearchResult extends SearchResult<ChunkLocation> {
 
     @Override
     public void addEntity(Entity entity) {
-        add(entity.getLocation(), entity.getType().toString());
+        if (entity == null || !entity.isValid()) {
+            return;
+        }
+        Location loc = entity.getLocation();
+        if (loc.getWorld() != null) {
+            add(loc, entity.getType().toString());
+        }
     }
 
     @Override
     public void addBlockState(BlockState blockState) {
-        add(blockState.getLocation(), blockState.getType().toString());
+        if (blockState == null) {
+            return;
+        }
+        Location loc = blockState.getLocation();
+        if (loc.getWorld() != null) {
+            add(loc, blockState.getType().toString());
+        }
     }
 
     @Override
     public void add(Location location, String type) {
+        if (location == null || location.getWorld() == null) {
+            return;
+        }
         ChunkLocation chunkLocation = new ChunkLocation(location);
 
         if (!resultEntryMap.containsKey(chunkLocation)) {
@@ -53,19 +68,26 @@ public class ChunkSearchResult extends SearchResult<ChunkLocation> {
             Location location = new Location(targetWorld, anchorX, 64, anchorZ);
 
             scheduler.runAtLocation(location, task -> targetWorld.getChunkAtAsync(cx, cz, false, chunk -> {
+                if (chunk == null) {
+                    sender.sendMessage(ChatColor.RED + "Chunk " + ChatColor.WHITE + cx + ", " + cz + ChatColor.RED + " could not be loaded.");
+                    return;
+                }
                 Location loc = null;
 
                 for (Entity e : chunk.getEntities()) {
-                    if (e.getType().toString().equals(entry.getEntryCount().get(0).getKey())) {
+                    if (e.isValid() && e.getType().toString().equals(entry.getEntryCount().get(0).getKey())) {
                         loc = e.getLocation();
                         break;
                     }
                 }
 
-                for (BlockState b : chunk.getTileEntities()) {
-                    if (b.getType().toString().equals(entry.getEntryCount().get(0).getKey())) {
-                        loc = b.getLocation().add(0, 1, 0);
-                        break;
+                if (loc == null) {
+                    for (BlockState b : chunk.getTileEntities()) {
+                        if (b.getType().toString().equals(entry.getEntryCount().get(0).getKey())) {
+                            Location blockLoc = b.getLocation();
+                            loc = blockLoc.add(0, 1, 0);
+                            break;
+                        }
                     }
                 }
 
@@ -84,7 +106,7 @@ public class ChunkSearchResult extends SearchResult<ChunkLocation> {
                 );
             }));
 
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             sender.sendMessage(ChatColor.RED + e.getMessage());
         }
     }

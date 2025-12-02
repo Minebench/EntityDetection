@@ -31,19 +31,19 @@ public class TpSubCommand extends SubCommand {
 
     @Override
     public boolean execute(CommandSender sender, String[] args) {
-        if(!(sender instanceof Player)) {
+        if (!(sender instanceof Player)) {
             sender.sendMessage(ChatColor.RED + "This sub command can only be run by a player!");
             return true;
         }
 
-        if(args.length == 0) {
+        if (args.length == 0) {
             return false;
         }
         return teleport((Player)sender, args[0], getPlugin().getResult(sender));
     }
 
     private <T> boolean teleport(Player sender, String page, SearchResult<T> lastResult) {
-        if(lastResult == null) {
+        if (lastResult == null) {
             sender.sendMessage(ChatColor.RED + "You have to view a search result before teleporting to an entry! Use /detect search or /detect list [<type>]");
             return true;
         }
@@ -51,12 +51,12 @@ public class TpSubCommand extends SubCommand {
         int i;
         try {
             i = Integer.parseInt(page);
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             sender.sendMessage(ChatColor.YELLOW + page + ChatColor.RED + " is not a proper number input!");
             return false;
         }
 
-        if(i == 0 || lastResult.getSortedEntries().size() < i) {
+        if (i == 0 || lastResult.getSortedEntries().size() < i) {
             sender.sendMessage(ChatColor.RED + "Result " + ChatColor.YELLOW + page + ChatColor.RED + " is not in the list!");
             return true;
         }
