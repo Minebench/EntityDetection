@@ -35,8 +35,8 @@ public class SearchSubCommand extends SubCommand {
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         EntitySearch search = new EntitySearch(getPlugin(), sender);
-        if(args.length > 0) {
-            for(String arg : args) {
+        if (args.length > 0) {
+            for (String arg : args) {
                 if ("--regions".equalsIgnoreCase(arg)) {
                     Plugin plugin = Bukkit.getPluginManager().getPlugin("WorldGuard");
                     if (plugin != null && plugin.isEnabled() && plugin.getDescription().getVersion().startsWith("7"))
@@ -52,12 +52,10 @@ public class SearchSubCommand extends SubCommand {
                     arg = arg.substring(0, arg.length() - 1);
                 }
                 boolean found = false;
-                if (!found) {
-                    try {
-                        search.addSearchedType(EntityType.valueOf(arg.toUpperCase()));
-                        found = true;
-                    } catch (IllegalArgumentException ignored) {}
-                }
+                try {
+                    search.addSearchedType(EntityType.valueOf(arg.toUpperCase()));
+                    found = true;
+                } catch (IllegalArgumentException ignored) {}
                 if (!found) {
                     try {
                         search.addSearchedBlockState(Class.forName("org.bukkit.block." + arg, false, getPlugin().getServer().getClass().getClassLoader())); //TODO: This is case sensitive :(
@@ -74,7 +72,7 @@ public class SearchSubCommand extends SubCommand {
                     try {
                         search.setType(SearchType.getByAlias(arg.toUpperCase()));
                         found = true;
-                    } catch(IllegalArgumentException ignored) {}
+                    } catch (IllegalArgumentException ignored) {}
                 }
                 if (!found) {
                     try {
@@ -89,7 +87,7 @@ public class SearchSubCommand extends SubCommand {
         } else {
             search.setType(SearchType.MONSTER);
         }
-        if(!getPlugin().startSearch(search)) {
+        if (!getPlugin().startSearch(search)) {
             sender.sendMessage(ChatColor.YELLOW + search.getOwner() + ChatColor.RED + " already started a search!");
         }
         return true;

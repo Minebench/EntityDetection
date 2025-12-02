@@ -97,7 +97,7 @@ public class EntityDetection extends JavaPlugin {
     public void addResult(SearchResult<?> result) {
         if (result.getType() == SearchType.CUSTOM && result.getSearched().size() == 1) {
             Set<String> searchedEntities = result.getSearched();
-            customResults.put(searchedEntities.toArray(new String[searchedEntities.size()])[0], result);
+            customResults.put(searchedEntities.toArray(new String[0])[0], result);
         } else {
             results.put(result.getType(), result);
         }
@@ -144,15 +144,16 @@ public class EntityDetection extends JavaPlugin {
 
                 Component entityCounts = Component.empty();
                 int entitiesListed = 0;
-                for(Entry<String, Integer> entityEntry : entry.getEntryCount()) {
+                for (Entry<String, Integer> entityEntry : entry.getEntryCount()) {
                     entityCounts = entityCounts.append(getMessage(sender, "result.entity-count",
                             "type", Utils.enumToHumanName(entityEntry.getKey()),
                             "count", String.valueOf(entityEntry.getValue())
                     ));
 
                     entitiesListed++;
-                    if(entitiesListed >= 3)
+                    if (entitiesListed >= 3) {
                         break;
+                    }
                 }
 
                 resultLine = Replacer.replaceIn(resultLine, "entitycounts", entityCounts);

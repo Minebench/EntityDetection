@@ -29,7 +29,7 @@ public class StopSubCommand extends SubCommand {
 
     @Override
     public boolean execute(CommandSender sender, String[] args) {
-        if(getPlugin().stopSearch(sender.getName())) {
+        if (getPlugin().stopSearch(sender.getName())) {
             EntitySearch search = getPlugin().getCurrentSearch();
             sender.sendMessage(ChatColor.YELLOW + "Stopped " + search.getType().toString() + " search by " + search.getOwner() + " after " + search.getDuration() + "s!" );
         } else {

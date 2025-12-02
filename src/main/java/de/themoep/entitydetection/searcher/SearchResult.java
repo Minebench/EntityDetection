@@ -114,7 +114,7 @@ public abstract class SearchResult<T> {
      * Sort the results and set the end time
      */
     public void sort() {
-        for(SearchResultEntry<?> chunkEntry : resultEntryMap.values()) {
+        for (SearchResultEntry<?> chunkEntry : resultEntryMap.values()) {
             chunkEntry.sort();
         }
         resultEntryList = new ArrayList<>(resultEntryMap.values());

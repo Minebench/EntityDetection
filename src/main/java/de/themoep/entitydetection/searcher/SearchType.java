@@ -100,13 +100,13 @@ public enum SearchType {
 
         List<Class> classList = new LinkedList<>(Arrays.asList(classes));
 
-        if(classes.length > 0) {
-            for(EntityType et : EntityType.values()) {
-                if(typeSet.contains(et)) {
+        if (classes.length > 0) {
+            for (EntityType et : EntityType.values()) {
+                if (typeSet.contains(et)) {
                     continue;
                 }
                 Class<? extends Entity> e = et.getEntityClass();
-                if(e == null) {
+                if (e == null) {
                     continue;
                 }
                 for (Class eClass : classList) {
@@ -152,9 +152,9 @@ public enum SearchType {
      * @throws IllegalArgumentException Thrown when there is no sub command with this alias
      */
     public static SearchType getByAlias(String alias) throws IllegalArgumentException{
-        for(SearchType type : SearchType.values()) {
-            for(String a : type.aliases) {
-                if(a.equals(alias)) {
+        for (SearchType type : SearchType.values()) {
+            for (String a : type.aliases) {
+                if (a.equals(alias)) {
                     return type;
                 }
             }

@@ -44,16 +44,16 @@ public class PluginCommandExecutor implements CommandExecutor {
     }
 
     public void register(SubCommand sub) {
-        if(!subCommands.containsKey(sub.getCommand())) {
+        if (!subCommands.containsKey(sub.getCommand())) {
             subCommands.put(sub.getCommand(), new LinkedHashMap<String, SubCommand>());
         }
-        if(subCommands.get(sub.getCommand()).containsKey(sub.getPath())) {
+        if (subCommands.get(sub.getCommand()).containsKey(sub.getPath())) {
             throw new IllegalArgumentException("A sub command with the path '" + sub.getPath() + "' is already defined for command '" + sub.getCommand() + "'!");
         }
         subCommands.get(sub.getCommand()).put(sub.getPath(), sub);
         try {
             plugin.getServer().getPluginManager().addPermission(sub.getPermission());
-        } catch(IllegalArgumentException ignore) {
+        } catch (IllegalArgumentException ignore) {
             // Permission was already defined correctly in the plugin.yml
         }
     }
