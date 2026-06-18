@@ -2,6 +2,7 @@ package de.themoep.entitydetection.searcher;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
+import com.google.common.collect.Multimaps;
 import com.tcoded.folialib.impl.PlatformScheduler;
 import com.tcoded.folialib.wrapper.task.WrappedTask;
 import de.themoep.entitydetection.EntityDetection;
@@ -16,10 +17,10 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
@@ -48,8 +49,9 @@ public class EntitySearch implements Consumer<WrappedTask> {
     private Set<Material> searchedMaterial = new HashSet<>();
     private long startTime;
     private boolean running = true;
-    private Multimap<EntityType, Location> entities = MultimapBuilder.hashKeys().arrayListValues().build();
-    private Map<Material, Multimap<Class, Location>> blockStates = new HashMap<>();
+    // Populated concurrently from multiple region threads on Folia, so both must be thread-safe.
+    private Multimap<EntityType, Location> entities = Multimaps.synchronizedMultimap(MultimapBuilder.hashKeys().arrayListValues().build());
+    private Map<Material, Multimap<Class, Location>> blockStates = new ConcurrentHashMap<>();
 
     private boolean isWorldGuardRegion = false;
     private final AtomicInteger pending = new AtomicInteger(0);
@@ -156,11 +158,8 @@ public class EntitySearch implements Consumer<WrappedTask> {
                     scheduler.runAtLocation(chunk.getBlock(0, 0, 0).getLocation(), task -> {
                         try {
                             for (BlockState state : chunk.getTileEntities()) {
-                                Multimap<Class, Location> multiMap = blockStates.get(state.getType());
-                                if (multiMap == null) {
-                                    multiMap = MultimapBuilder.hashKeys().arrayListValues().build();
-                                    blockStates.put(state.getType(), multiMap);
-                                }
+                                Multimap<Class, Location> multiMap = blockStates.computeIfAbsent(state.getType(),
+                                        k -> Multimaps.synchronizedMultimap(MultimapBuilder.hashKeys().arrayListValues().build()));
                                 multiMap.put(state.getClass(), state.getLocation());
                             }
                         } finally {
