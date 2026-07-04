@@ -155,7 +155,7 @@ public class EntitySearch implements Consumer<WrappedTask> {
                     scheduled++;
                     scheduler.runAtLocation(chunk.getBlock(0, 0, 0).getLocation(), task -> {
                         try {
-                            for (BlockState state : chunk.getTileEntities()) {
+                            for (BlockState state : chunk.getTileEntities(false)) {
                                 Multimap<Class, Location> multiMap = blockStates.get(state.getType());
                                 if (multiMap == null) {
                                     multiMap = MultimapBuilder.hashKeys().arrayListValues().build();

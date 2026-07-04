@@ -62,7 +62,7 @@ public class ChunkSearchResult extends SearchResult<ChunkLocation> {
                     }
                 }
 
-                for (BlockState b : chunk.getTileEntities()) {
+                for (BlockState b : chunk.getTileEntities(false)) {
                     if (b.getType().toString().equals(entry.getEntryCount().get(0).getKey())) {
                         loc = b.getLocation().add(0, 1, 0);
                         break;
