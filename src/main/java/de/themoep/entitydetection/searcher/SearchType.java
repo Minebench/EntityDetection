@@ -3,6 +3,7 @@ package de.themoep.entitydetection.searcher;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Ambient;
 import org.bukkit.entity.Animals;
+import org.bukkit.entity.Boat;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Golem;
@@ -57,12 +58,12 @@ public enum SearchType {
     MISC(
             new EntityType[]{
                     EntityType.FIREWORK,
-                    EntityType.ENDER_SIGNAL,
-                    EntityType.BOAT
+                    EntityType.ENDER_SIGNAL
             },
             new Class[]{
                     Projectile.class,
                     Minecart.class,
+                    Boat.class,
                     Item.class
             }
     ),
